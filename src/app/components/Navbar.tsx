@@ -1,21 +1,17 @@
 'use client';
 
+import Image from "next/image";
 import Link from 'next/link';
 import { motion, useCycle } from 'framer-motion';
-import { FiSearch, FiMenu, FiX, FiShoppingCart, FiUser } from 'react-icons/fi';
-import { useState, useEffect, useRef, useMemo } from 'react';
+import { FiSearch, FiMenu, FiX } from 'react-icons/fi';
+import { useState, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 
 const Navbar = () => {
   const [isOpen, toggleOpen] = useCycle(false, true);
   const [isMobile, setIsMobile] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-  const [activeSection, setActiveSection] = useState<string>('home');
-  const [showSearch, setShowSearch] = useState(false);
-  const [cartCount, setCartCount] = useState(0); // Example cart state
-  const navItems = useMemo(() => ['Home', 'Shop', 'About', 'Service', 'Blog', 'Contact'], []);
-  const navbarRef = useRef<HTMLDivElement>(null);
+  const pathname = usePathname();
 
-  // ✅ Resize check
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
     handleResize();
@@ -23,144 +19,89 @@ const Navbar = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // ✅ Scroll check
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
-
-      const sections = navItems.map((item) =>
-        document.getElementById(item.toLowerCase())
-      );
-      const current = sections.find(
-        (section) =>
-          section &&
-          section.offsetTop - 100 <= window.scrollY &&
-          section.offsetTop + section.offsetHeight > window.scrollY
-      );
-      if (current) setActiveSection(current.id);
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [navItems]); // Dependency is now stable due to useMemo
-
-  // ✅ Menu animation
   const menuVariants = {
-    open: { opacity: 1, height: 'auto', transition: { duration: 0.35 } },
-    closed: { opacity: 0, height: 0, transition: { duration: 0.25 } },
+    open: { opacity: 1, height: 'auto', transition: { duration: 0.4, staggerChildren: 0.1 } },
+    closed: { opacity: 0, height: 0, transition: { duration: 0.3 } },
   };
 
-  // Handle click outside to close search or menu
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (navbarRef.current && !navbarRef.current.contains(event.target as Node)) {
-        setShowSearch(false);
-        if (isMobile) toggleOpen(0); // Use 0 to explicitly close the menu
-      }
-    };
+  const navItemVariants = { hidden: { opacity: 0, y: -10 }, visible: { opacity: 1, y: 0 } };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [isMobile, toggleOpen]);
+  const navItems = [
+    { name: 'Home', href: '/' },
+    { name: 'Shop', href: '/shop' },
+    { name: 'About Us', href: '/aboutus' },
+    { name: 'Service', href: '/service' },
+    { name: 'Blog', href: '/blog' },
+    { name: 'Contact Us', href: '/contactus' },
+  ];
 
   return (
     <motion.nav
-      ref={navbarRef}
-      className={`fixed top-0 w-full z-50 transition-all duration-300 ${scrolled ? 'bg-[#556B2F]/90 shadow-lg' : 'bg-[#556B2F]/80'} backdrop-blur-md`}
-      initial={{ y: -100 }}
+      className="fixed top-0 w-full bg-[#556B2F] shadow-md z-50"
+      initial={{ y: -80 }}
       animate={{ y: 0 }}
+      transition={{ duration: 0.5 }}
     >
-      <div className="container mx-auto px-4 py-3 flex justify-between items-center">
+      <div className="container mx-auto px-6 py-4 flex justify-between items-center">
         {/* Logo */}
-        <motion.h1
-          className="text-2xl font-bold text-white tracking-wide"
-          whileHover={{ scale: 1.05 }}
-        >
-          <Link href="/">My Body Healer</Link>
-        </motion.h1>
+        <motion.div className="flex items-center space-x-3" whileHover={{ scale: 1.05 }}>
+          <Image
+            src="/logo.png" // اپنی logo image یہاں لگائیں
+            alt="Logo"
+            width={64} // 16*4=64px
+            height={64}
+            className="object-contain"
+          />
+          <div className="flex flex-col">
+            <Link href="/" className="text-white text-2xl font-bold tracking-wide">
+              My Body Healer
+            </Link>
+            <span className="text-white text-sm font-light font-sans">
+              just heal it, don&apos;t treat it
+            </span>
+          </div>
+        </motion.div>
 
-        {/* Desktop Menu */}
-        {!isMobile && (
-          <ul className="flex space-x-6">
-            {navItems.map((item) => (
-              <motion.li
-                key={item}
-                className="relative group"
-                whileHover={{ scale: 1.05 }}
-              >
-                <Link
-                  href={`#${item.toLowerCase()}`}
-                  className={`text-base transition-colors ${
-                    activeSection === item.toLowerCase()
-                      ? 'text-white font-semibold'
-                      : 'text-white/80 hover:text-white'
-                  }`}
+        {/* Desktop Menu + Search */}
+        <div className="flex items-center">
+          {!isMobile && (
+            <ul className="flex space-x-8">
+              {navItems.map((item) => (
+                <motion.li
+                  key={item.name}
+                  variants={navItemVariants}
+                  initial="hidden"
+                  animate="visible"
+                  whileHover={{ scale: 1.05 }}
+                  className="relative group"
                 >
-                  {item}
-                </Link>
-                <motion.span
-                  className="absolute left-0 -bottom-1 w-0 h-[2px] bg-white"
-                  initial={{ width: 0 }}
-                  whileHover={{ width: '100%' }}
-                  transition={{ duration: 0.3 }}
-                />
-              </motion.li>
-            ))}
-          </ul>
-        )}
-
-        {/* Icons Section */}
-        <div className="flex items-center space-x-5">
-          {/* Search */}
-          <motion.div
-            whileHover={{ scale: 1.1 }}
-            className="relative group"
-            onClick={() => setShowSearch((prev) => !prev)}
-          >
-            <FiSearch className="text-white cursor-pointer" size={20} />
-            <motion.span
-              className="absolute left-0 -bottom-1 w-0 h-[2px] bg-white"
-              initial={{ width: 0 }}
-              whileHover={{ width: '100%' }}
-              transition={{ duration: 0.3 }}
-            />
-          </motion.div>
-
-          {/* Cart with Badge */}
-          <motion.div whileHover={{ scale: 1.1 }} className="relative group">
-            <FiShoppingCart className="text-white cursor-pointer" size={20} />
-            {cartCount > 0 && (
-              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
-                {cartCount}
-              </span>
-            )}
-            <motion.span
-              className="absolute left-0 -bottom-1 w-0 h-[2px] bg-white"
-              initial={{ width: 0 }}
-              whileHover={{ width: '100%' }}
-              transition={{ duration: 0.3 }}
-            />
-          </motion.div>
-
-          {/* User Dropdown */}
-          <motion.div whileHover={{ scale: 1.1 }} className="relative group">
-            <FiUser className="text-white cursor-pointer" size={20} />
-            <motion.span
-              className="absolute left-0 -bottom-1 w-0 h-[2px] bg-white"
-              initial={{ width: 0 }}
-              whileHover={{ width: '100%' }}
-              transition={{ duration: 0.3 }}
-            />
+                  <Link
+                    href={item.href}
+                    className={`transition-colors ${
+                      pathname === item.href
+                        ? 'text-yellow-300 font-semibold'
+                        : 'text-white hover:text-yellow-300'
+                    }`}
+                  >
+                    {item.name}
+                  </Link>
+                  <span className="absolute left-0 -bottom-1 w-0 h-[2px] bg-yellow-300 group-hover:w-full transition-all" />
+                </motion.li>
+              ))}
+            </ul>
+          )}
+          <motion.div whileHover={{ scale: 1.1 }} className="ml-6 cursor-pointer text-white">
+            <FiSearch size={22} />
           </motion.div>
 
           {/* Mobile Menu Button */}
           {isMobile && (
             <motion.button
               onClick={() => toggleOpen()}
-              className="text-white"
+              className="ml-4 text-white"
               whileHover={{ scale: 1.1 }}
             >
-              {isOpen ? <FiX size={24} /> : <FiMenu size={24} />}
+              {isOpen ? <FiX size={26} /> : <FiMenu size={26} />}
             </motion.button>
           )}
         </div>
@@ -169,54 +110,28 @@ const Navbar = () => {
       {/* Mobile Dropdown Menu */}
       {isMobile && (
         <motion.div
-          className="overflow-hidden bg-[#556B2F]/90 backdrop-blur-md shadow-md"
+          className="overflow-hidden bg-[#556B2F] shadow-lg rounded-b-xl"
           initial={false}
           animate={isOpen ? 'open' : 'closed'}
           variants={menuVariants}
         >
-          <ul className="flex flex-col items-center space-y-4 p-4">
+          <ul className="flex flex-col items-center space-y-6 p-6">
             {navItems.map((item) => (
-              <motion.li
-                key={item}
-                className="relative group"
-                whileHover={{ scale: 1.05 }}
-              >
+              <motion.li key={item.name} variants={navItemVariants} whileHover={{ scale: 1.05 }}>
                 <Link
-                  href={`#${item.toLowerCase()}`}
-                  className={`text-base transition-colors ${
-                    activeSection === item.toLowerCase()
-                      ? 'text-white font-semibold'
-                      : 'text-white/80 hover:text-white'
+                  href={item.href}
+                  className={`text-lg transition-colors ${
+                    pathname === item.href
+                      ? 'text-yellow-300 font-semibold'
+                      : 'text-white hover:text-yellow-300'
                   }`}
-                  onClick={() => toggleOpen(0)}
+                  onClick={() => toggleOpen()}
                 >
-                  {item}
+                  {item.name}
                 </Link>
-                <motion.span
-                  className="absolute left-0 -bottom-1 w-0 h-[2px] bg-white"
-                  initial={{ width: 0 }}
-                  whileHover={{ width: '100%' }}
-                  transition={{ duration: 0.3 }}
-                />
               </motion.li>
             ))}
           </ul>
-        </motion.div>
-      )}
-
-      {/* Search Input Overlay */}
-      {showSearch && (
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -20 }}
-          className="absolute top-16 right-4 w-72 bg-white/80 backdrop-blur-md shadow-lg rounded-xl p-3"
-        >
-          <input
-            type="text"
-            placeholder="Search..."
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#556B2F]"
-          />
         </motion.div>
       )}
     </motion.nav>
