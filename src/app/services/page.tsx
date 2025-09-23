@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";   // ✅ Link import
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { FaShippingFast, FaLeaf, FaAward, FaHeadset } from "react-icons/fa";
@@ -22,13 +23,7 @@ const testimonials = [
 ];
 
 // Hero Images (must exist in /public)
-const heroImages = [
-  "/b1.avif",
-  "/b3.avif",
-  "/b4.avif",
-  "/b5.avif",
-  "/b6.avif",
-];
+const heroImages = ["/b1.avif", "/b3.avif", "/b4.avif", "/b5.avif", "/b6.avif"];
 
 export default function ServicePage() {
   const [current, setCurrent] = useState(0);
@@ -49,9 +44,7 @@ export default function ServicePage() {
   };
 
   const prevSlide = () => {
-    setTestimonial(
-      (prev) => (prev - 1 + testimonials.length) % testimonials.length
-    );
+    setTestimonial((prev) => (prev - 1 + testimonials.length) % testimonials.length);
   };
 
   return (
@@ -123,21 +116,31 @@ export default function ServicePage() {
       <section className="py-16 px-6 md:px-20 bg-gray-50">
         <h2 className="text-3xl font-bold text-center mb-12">Our Expertise</h2>
         <div className="grid md:grid-cols-2 gap-8">
-          <div className="bg-white p-8 rounded-2xl shadow-md hover:shadow-xl transition">
+          <div className="bg-white p-8 rounded-2xl shadow-md hover:shadow-xl transition flex flex-col">
             <h3 className="text-2xl font-semibold mb-4">
               Out-Licensing Products
             </h3>
-            <p className="text-gray-600">
+            <p className="text-gray-600 flex-grow">
               Providing world-class licensed products to meet international
               standards with guaranteed quality and compliance.
             </p>
+            <Link href="/services/licenced">
+              <button className="mt-6 bg-green-900 text-white px-5 py-2 rounded-lg hover:bg-green-600 transition self-start">
+                Read More
+              </button>
+            </Link>
           </div>
-          <div className="bg-white p-8 rounded-2xl shadow-md hover:shadow-xl transition">
+          <div className="bg-white p-8 rounded-2xl shadow-md hover:shadow-xl transition flex flex-col">
             <h3 className="text-2xl font-semibold mb-4">Contract Services</h3>
-            <p className="text-gray-600">
+            <p className="text-gray-600 flex-grow">
               Offering customized contract-based services for research,
               manufacturing, and development solutions.
             </p>
+            <Link href="/services/contract">
+              <button className="mt-6 bg-green-900 text-white px-5 py-2 rounded-lg hover:bg-green-600 transition self-start">
+                Read More
+              </button>
+            </Link>
           </div>
         </div>
       </section>
@@ -154,9 +157,11 @@ export default function ServicePage() {
             placeholder="Enter your email"
             className="px-4 py-3 rounded-lg border w-72 focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
-          <button className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition">
-            Subscribe
-          </button>
+          <Link href="/subscribe">
+            <button className="bg-green-900 text-white px-6 py-3 rounded-lg hover:bg-green-600 transition">
+              Subscribe
+            </button>
+          </Link>
         </div>
       </section>
 
