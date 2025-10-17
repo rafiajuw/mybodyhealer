@@ -1,13 +1,14 @@
-"use client";
-
-import Image from "next/image";
+// src/app/services/blogs/[slug]/page.tsx
 import Link from "next/link";
-import { motion } from "framer-motion";
-import { ArrowLeft } from "lucide-react";
-import { BlogPost } from "@/app/components/blogcard";
+import BlogContent from "./BlogContent";
 
-interface BlogDetailProps {
-  params: Promise<{ slug: string }>;
+interface BlogPost {
+  slug: string;
+  title: string;
+  excerpt: string;
+  date: string;
+  reading: string;
+  image: string;
 }
 
 const POSTS: BlogPost[] = [
@@ -40,100 +41,39 @@ const POSTS: BlogPost[] = [
   },
 ];
 
-// ✅ make the function async and await params
+interface BlogDetailProps {
+  params: Promise<{ slug: string }>;
+}
+
 export default async function BlogDetailPage({ params }: BlogDetailProps) {
   const { slug } = await params;
   const post = POSTS.find((p) => p.slug === slug) || POSTS[0];
 
-  return (
-    <main className="bg-white text-gray-900">
-      {/* 🔹 HERO SECTION */}
-      <section className="relative h-[70vh] w-full overflow-hidden">
-        <Image
-          src={post.image}
-          alt={post.title}
-          fill
-          priority
-          className="object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-olive-900/70 via-olive-800/40 to-transparent" />
+  if (!post) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+            Blog Post Not Found
+          </h1>
 
-        <div className="relative z-10 flex flex-col items-center justify-center h-full text-center text-white px-6">
-          <motion.h1
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1 }}
-            className="text-4xl md:text-5xl font-extrabold drop-shadow-lg"
+          {/* ✅ Fixed: Use Link instead of <a> */}
+          <Link
+            href="/services/blogs"
+            className="text-emerald-600 hover:underline font-medium"
           >
-            {post.title}
-          </motion.h1>
-          <motion.p
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, delay: 0.3 }}
-            className="mt-4 max-w-2xl text-gray-100"
-          >
-            {post.excerpt}
-          </motion.p>
-        </div>
-      </section>
-
-      {/* 🔹 BLOG CONTENT */}
-      <section className="max-w-4xl mx-auto py-16 px-6">
-        <motion.article
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="bg-white rounded-2xl shadow-lg p-8 border border-olive-100"
-        >
-          <div className="text-sm text-gray-500 mb-4">
-            {post.date} • {post.reading}
-          </div>
-
-          <p className="leading-relaxed">
-            At <strong>My Body Healer</strong>, we believe in the synergy between
-            science and nature. Our supplements are carefully formulated using
-            high-quality natural ingredients, helping promote better health,
-            immunity, and balance in everyday life.
-          </p>
-
-          <h2 className="mt-8 text-2xl font-semibold text-olive-700">
-            Key Highlights
-          </h2>
-          <ul className="list-disc pl-6 mt-4 space-y-2 text-gray-700">
-            <li>
-              Research-driven products with clinically-tested ingredients.
-            </li>
-            <li>Trusted formulations for long-term wellness and recovery.</li>
-            <li>Pure olive-based nutrition for enhanced vitality.</li>
-          </ul>
-
-          <blockquote className="border-l-4 border-[#4b7a2f] pl-4 italic text-gray-600 mt-8">
-            “Your body’s natural ability to heal itself is the greatest
-            medicine. Nourish it, protect it, and let it thrive.”
-          </blockquote>
-        </motion.article>
-
-        {/* 🔹 BUTTONS */}
-        <div className="mt-10 flex flex-wrap justify-center gap-4">
-          <Link href="/services/blogs">
-            <motion.span
-              whileHover={{ scale: 1.05 }}
-              className="inline-flex items-center gap-2 px-6 py-3 bg-[#4b7a2f] hover:bg-[#6fa84b] text-white font-semibold rounded-full shadow transition cursor-pointer"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              Back to Blog
-            </motion.span>
+            ← Back to Blog
           </Link>
-
-          <a
-            href="#contact"
-            className="inline-flex items-center px-6 py-3 border border-[#4b7a2f] text-[#4b7a2f] hover:bg-[#4b7a2f] hover:text-white rounded-full font-medium transition shadow-sm"
-          >
-            Contact Medical Team
-          </a>
         </div>
-      </section>
-    </main>
-  );
+      </div>
+    );
+  }
+
+  return <BlogContent post={post} />;
+}
+
+export async function generateStaticParams() {
+  return POSTS.map((post) => ({
+    slug: post.slug,
+  }));
 }

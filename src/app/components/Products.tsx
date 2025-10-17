@@ -7,31 +7,31 @@ import { motion } from "framer-motion";
 const products = [
   {
     name: "Zerodaks",
-    price: 20,
-    oldPrice: 30,
     img: "/b1.avif",
     discount: "33% OFF",
+    price: 25,
+    oldPrice: 37,
   },
   {
     name: "Sakara Mork",
-    price: 30,
-    oldPrice: 50,
     img: "/b4.avif",
     discount: "40% OFF",
+    price: 30,
+    oldPrice: 50,
   },
   {
     name: "NK Defense",
-    price: 100,
-    oldPrice: 150,
     img: "/olive2.avif",
     discount: "30% OFF",
+    price: 18,
+    oldPrice: 26,
   },
 ];
 
-const Products = () => {
+export default function Products() {
   const [timeLeft, setTimeLeft] = useState({ hours: 2, minutes: 0, seconds: 0 });
 
-  // Countdown timer
+  // ✅ Countdown timer
   useEffect(() => {
     const timer = setInterval(() => {
       setTimeLeft((prev) => {
@@ -39,7 +39,7 @@ const Products = () => {
         if (seconds > 0) return { ...prev, seconds: seconds - 1 };
         if (minutes > 0) return { hours, minutes: minutes - 1, seconds: 59 };
         if (hours > 0) return { hours: hours - 1, minutes: 59, seconds: 59 };
-        return prev;
+        return { hours: 0, minutes: 0, seconds: 0 };
       });
     }, 1000);
     return () => clearInterval(timer);
@@ -49,7 +49,7 @@ const Products = () => {
     <section className="container mx-auto py-12 px-4">
       {/* Heading with Timer */}
       <div className="text-center mb-12">
-        <h2 className="text-3xl font-extrabold text-primary drop-shadow-sm">
+        <h2 className="text-3xl font-extrabold text-emerald-700 drop-shadow-sm">
           🔥 Special Limited Time Offers
         </h2>
         <p className="text-gray-600 mt-2">
@@ -66,28 +66,28 @@ const Products = () => {
           <motion.div
             key={index}
             whileHover={{ scale: 1.04 }}
-            className="relative bg-white rounded-2xl shadow-lg overflow-hidden group transition-all"
+            className="relative bg-white rounded-2xl shadow-lg overflow-hidden group transition-all duration-300"
           >
             {/* Discount Badge */}
-            <span className="absolute top-4 left-4 bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full z-10">
+            <span className="absolute top-4 left-4 bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-full z-10">
               {product.discount}
             </span>
 
-            {/* Product Image with Hover Overlay */}
-            <div className="relative w-full h-48">
+            {/* Product Image with Overlay */}
+            <div className="relative w-full h-48 overflow-hidden">
               <Image
                 src={product.img}
                 alt={product.name}
                 fill
-                className="object-contain transition-transform duration-500 group-hover:scale-110 group-hover:blur-sm"
+                className="object-cover transition-transform duration-500 group-hover:scale-110"
               />
 
               {/* Overlay with Button */}
-              <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+              <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500">
                 <motion.button
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.95 }}
-                  className="bg-gradient-to-r from-primary to-accent text-white px-6 py-2 rounded-lg font-semibold shadow-lg"
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2 rounded-lg font-semibold shadow-md transition"
                 >
                   🛒 Shop Now
                 </motion.button>
@@ -96,9 +96,11 @@ const Products = () => {
 
             {/* Product Info */}
             <div className="p-6 text-center">
-              <h3 className="text-lg font-bold text-primary">{product.name}</h3>
+              <h3 className="text-lg font-bold text-gray-900">
+                {product.name}
+              </h3>
               <div className="flex items-center justify-center gap-3 mt-2">
-                <p className="text-xl font-semibold text-green-600">
+                <p className="text-xl font-semibold text-emerald-600">
                   ${product.price}
                 </p>
                 <p className="text-sm text-gray-400 line-through">
@@ -111,6 +113,4 @@ const Products = () => {
       </div>
     </section>
   );
-};
-
-export default Products;
+}

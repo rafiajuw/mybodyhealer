@@ -1,16 +1,13 @@
 "use client";
 
+import build from "next/dist/build";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import {
   FaLeaf,
   FaGlobe,
   FaAward,
   FaUsers,
-  FaInstagram,
-  FaFacebookF,
-  FaLinkedinIn,
-  FaTwitter,
   FaChevronLeft,
   FaChevronRight,
 } from "react-icons/fa";
@@ -76,7 +73,7 @@ function AboutHero() {
           About My Body Healer
         </h1>
         <p className="mt-4 text-lg sm:text-xl text-emerald-100/95">
-          Natural, evidence-informed supplements and wellness solutions — crafted
+          Natural, evidence-informed supplements and wellness solutions &mdash; crafted
           to support healthier lives at scale.
         </p>
       </div>
@@ -92,30 +89,30 @@ function CompanySlider({ images }: SliderProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [visibleSlides, setVisibleSlides] = useState(4);
 
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth < 640) setVisibleSlides(1);
-      else if (window.innerWidth < 768) setVisibleSlides(2);
-      else if (window.innerWidth < 1024) setVisibleSlides(3);
-      else setVisibleSlides(4);
-    };
-
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+  const updateVisibleSlides = useCallback(() => {
+    if (window.innerWidth < 640) setVisibleSlides(1);
+    else if (window.innerWidth < 768) setVisibleSlides(2);
+    else if (window.innerWidth < 1024) setVisibleSlides(3);
+    else setVisibleSlides(4);
   }, []);
+
+  useEffect(() => {
+    updateVisibleSlides();
+    window.addEventListener("resize", updateVisibleSlides);
+    return () => window.removeEventListener("resize", updateVisibleSlides);
+  }, [updateVisibleSlides]);
 
   const totalSlides = Math.ceil(images.length / visibleSlides);
 
-  const nextSlide = () => {
+  const nextSlide = useCallback(() => {
     setCurrentIndex((prevIndex) => (prevIndex + 1) % totalSlides);
-  };
+  }, [totalSlides]);
 
-  const prevSlide = () => {
+  const prevSlide = useCallback(() => {
     setCurrentIndex((prevIndex) =>
       prevIndex === 0 ? totalSlides - 1 : prevIndex - 1
     );
-  };
+  }, [totalSlides]);
 
   return (
     <div className="relative w-full max-w-6xl mx-auto mt-8">
@@ -141,6 +138,10 @@ function CompanySlider({ images }: SliderProps) {
                   height={80}
                   className="object-contain"
                   sizes="(max-width: 768px) 50vw, 25vw"
+                  onError={(e) => {
+                    console.error(`Failed to load image: ${image}`);
+                    (e.target as HTMLImageElement).src = "/placeholder-logo.png";
+                  }}
                 />
               </div>
             </div>
@@ -182,16 +183,20 @@ function CompanySlider({ images }: SliderProps) {
 
 export default function AboutPage() {
   const [applied, setApplied] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [status, setStatus] = useState("");
   const [currentSlide, setCurrentSlide] = useState(0);
   const [visibleSlides, setVisibleSlides] = useState(3);
-  const [eventImages] = useState([
+  
+  const eventImages = [
     "/events1.webp",
     "/events2.webp",
     "/events3.webp",
     "/events4.webp",
     "/events5.webp",
     "/events6.webp",
-  ]);
+  ];
+  
   const totalSlides = Math.ceil(eventImages.length / visibleSlides);
 
   const companyImages = [
@@ -243,7 +248,7 @@ export default function AboutPage() {
     {
       name: "Dr. Omar Riaz",
       title: "Head of R&D",
-      quote: "Evidence-first approach — formulations that are safe, effective and consistent.",
+      quote: "Evidence-first approach &mdash; formulations that are safe, effective and consistent.",
     },
     {
       name: "Sara Malik",
@@ -257,17 +262,54 @@ export default function AboutPage() {
     },
   ];
 
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth < 640) setVisibleSlides(1);
-      else if (window.innerWidth < 768) setVisibleSlides(2);
-      else setVisibleSlides(3);
-    };
+  const handleCareerSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setSending(true);
+    setStatus("");
 
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    try {
+      const formData = new FormData(e.currentTarget);
+      
+      if (!formData.has("type")) {
+        formData.append("type", "career");
+      }
+
+      console.log("Form Data being sent:", Object.fromEntries(formData));
+
+      const response = await fetch("/api/form", {
+        method: "POST",
+        body: formData,
+      });
+
+      const result = await response.json();
+      console.log("API Response:", result);
+
+      if (response.ok && result.success) {
+        setStatus(result.message || "✅ Application submitted successfully!");
+        setApplied(true);
+        e.currentTarget.reset();
+      } else {
+        setStatus(result.message || "❌ Failed to submit. Please try again.");
+      }
+    } catch (error) {
+      console.error("Career form submission error:", error);
+      setStatus("❌ Network error. Please check your connection and try again.");
+    } finally {
+      setSending(false);
+    }
+  };
+
+  const updateEventSlides = useCallback(() => {
+    if (window.innerWidth < 640) setVisibleSlides(1);
+    else if (window.innerWidth < 768) setVisibleSlides(2);
+    else setVisibleSlides(3);
   }, []);
+
+  useEffect(() => {
+    updateEventSlides();
+    window.addEventListener("resize", updateEventSlides);
+    return () => window.removeEventListener("resize", updateEventSlides);
+  }, [updateEventSlides]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -279,22 +321,10 @@ export default function AboutPage() {
     return () => clearInterval(interval);
   }, [visibleSlides, totalSlides]);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    // Simulate form submission (replace with actual API call)
-    try {
-      // Example: await fetch('/api/submit', { method: 'POST', body: new FormData(e.currentTarget) });
-      setApplied(true);
-    } catch (error) {
-      console.error("Form submission failed:", error);
-    }
-  };
-
   return (
     <main className="font-poppins antialiased text-gray-800">
       <AboutHero />
 
-      {/* INTRO & VALUES */}
       <section className="container mx-auto px-6 py-12">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
           <div className="lg:col-span-2 space-y-6">
@@ -324,8 +354,8 @@ export default function AboutPage() {
                 <h3 className="font-semibold text-lg text-emerald-600">Corporate Values</h3>
                 <p className="mt-2 text-sm text-gray-600">
                   HB Group&apos;s Core values are the building blocks upon which we have
-                  built our business “Create & Innovate, Protect & Connect in life
-                  so people can choose a world of unlimited possibilities.” They are
+                  built our business &quot;Create &amp; Innovate, Protect &amp; Connect in life
+                  so people can choose a world of unlimited possibilities.&quot; They are
                   embodied in the way we manage our business, treat our employees,
                   and serve our valued customers.
                 </p>
@@ -353,7 +383,6 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* GROUP COMPANIES SECTION */}
       <section className="bg-gray-50 py-12">
         <div className="container mx-auto px-6">
           <h3 className="text-2xl font-bold text-gray-900 text-center mb-4">
@@ -387,7 +416,6 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* CAPABILITIES / STATS */}
       <section className="bg-white/80 border-t border-b py-12">
         <div className="container mx-auto px-6">
           <h3 className="text-2xl font-bold text-gray-900 text-center mb-8">
@@ -399,14 +427,14 @@ export default function AboutPage() {
               <FaLeaf className="text-emerald-600 w-8 h-8" />
               <h4 className="font-semibold">Herbal Formulations</h4>
               <p className="text-sm text-gray-600">
-                Scientifically developed herbal blends & supplements.
+                Scientifically developed herbal blends &amp; supplements.
               </p>
             </div>
             <div className="flex flex-col items-start gap-3 p-6 bg-emerald-50 rounded-xl border">
               <FaGlobe className="text-emerald-600 w-8 h-8" />
               <h4 className="font-semibold">Global Distribution</h4>
               <p className="text-sm text-gray-600">
-                Supply chain & logistics for bulk orders worldwide.
+                Supply chain &amp; logistics for bulk orders worldwide.
               </p>
             </div>
             <div className="flex flex-col items-start gap-3 p-6 bg-emerald-50 rounded-xl border">
@@ -427,7 +455,125 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* INDUSTRY VERTICALS / CATEGORIES */}
+      <section className="bg-white py-12">
+        <div className="container mx-auto px-6">
+          <h3 className="text-2xl font-bold text-gray-900 text-center mb-6">Careers</h3>
+          <div className="max-w-3xl mx-auto bg-emerald-50 border border-emerald-100 rounded-xl p-6">
+            <p className="text-gray-700 mb-4">
+              We&apos;re growing! If you&apos;re passionate about natural health and quality, 
+              join our team by submitting your application below.
+            </p>
+            
+            {!applied ? (
+              <form onSubmit={handleCareerSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <input type="hidden" name="type" value="career" />
+                
+                <input 
+                  name="name" 
+                  required 
+                  placeholder="Full Name *" 
+                  className="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-transparent" 
+                />
+                
+                <input 
+                  name="email" 
+                  type="email" 
+                  required 
+                  placeholder="Email Address *" 
+                  className="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-transparent" 
+                />
+                
+                <input 
+                  name="phone" 
+                  type="tel"
+                  placeholder="Phone Number (Optional)" 
+                  className="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-transparent" 
+                />
+                
+                <input 
+                  name="subject" 
+                  required
+                  placeholder="Position Applying For *" 
+                  className="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-transparent" 
+                />
+                
+                <textarea 
+                  name="message" 
+                  placeholder="Cover Letter / Why You Want to Join Us (Optional)" 
+                  rows={4} 
+                  className="p-3 border border-gray-300 rounded-lg md:col-span-2 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-transparent resize-none" 
+                />
+                
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Resume (PDF, DOC, DOCX - Max 10MB)
+                  </label>
+                  <input 
+                    type="file" 
+                    name="resume" 
+                    accept=".pdf,.doc,.docx"
+                    className="w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100" 
+                  />
+                  <p className="text-xs text-gray-500 mt-1">Attach your resume to complete your application</p>
+                </div>
+                
+                <button 
+                  type="submit" 
+                  disabled={sending}
+                  className="bg-emerald-600 text-white px-6 py-3 rounded-lg md:col-span-2 hover:bg-emerald-700 transition-colors duration-200 disabled:opacity-60 disabled:cursor-not-allowed font-medium"
+                >
+                  {sending ? (
+                    <span className="flex items-center justify-center">
+                      <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Sending...
+                    </span>
+                  ) : (
+                    "Apply Now"
+                  )}
+                </button>
+                
+                {status && (
+                  <div className={`md:col-span-2 text-center mt-4 font-medium py-3 rounded-lg px-4 border ${
+                    status.includes("✅") 
+                      ? "bg-green-100 text-green-700 border-green-300" 
+                      : "bg-red-100 text-red-700 border-red-300"
+                  }`}>
+                    {status}
+                  </div>
+                )}
+              </form>
+            ) : (
+              <div className="text-center py-8">
+                <div className="inline-flex items-center justify-center w-12 h-12 bg-green-100 rounded-full mb-4 mx-auto">
+                  <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+                <p className="text-emerald-700 font-semibold text-lg mb-2">
+                  ✅ Thank you for your application!
+                </p>
+                <p className="text-gray-600">
+                  We&apos;ve received your application and will review it soon. 
+                  You&apos;ll hear back from us within 3-5 business days.
+                </p>
+                <button 
+                  onClick={() => {
+                    setApplied(false);
+                    setStatus("");
+                  }}
+                  className="mt-4 inline-block bg-emerald-600 text-white px-6 py-2 rounded-lg hover:bg-emerald-700 transition-colors"
+                >
+                  Apply for Another Position
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+
       <section className="container mx-auto px-6 py-12">
         <h3 className="text-2xl font-bold text-gray-900 text-center mb-8">
           Wellness Categories Served
@@ -442,12 +588,16 @@ export default function AboutPage() {
                   fill
                   style={{ objectFit: "cover" }}
                   sizes="(max-width: 768px) 50vw, 33vw"
+                  onError={(e) => {
+                    console.error(`Failed to load category image: ${c.img}`);
+                    (e.target as HTMLImageElement).src = "/placeholder.jpg";
+                  }}
                 />
               </div>
               <div className="p-4 bg-white">
                 <h4 className="font-semibold">{c.title}</h4>
                 <p className="text-sm text-gray-600 mt-1">
-                  High-quality products & wholesale options.
+                  High-quality products &amp; wholesale options.
                 </p>
               </div>
             </article>
@@ -455,7 +605,6 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* LEADERSHIP */}
       <section className="bg-gray-50 py-12">
         <div className="container mx-auto px-6">
           <h3 className="text-2xl font-bold text-gray-900 text-center mb-10">
@@ -467,17 +616,16 @@ export default function AboutPage() {
               <div key={leader.name} className="bg-white rounded-xl p-6 shadow-sm">
                 <h4 className="font-semibold">{leader.name}</h4>
                 <p className="text-sm text-emerald-600">{leader.title}</p>
-                <p className="mt-3 text-sm text-gray-600">{leader.quote}</p>
+                <p className="mt-3 text-sm text-gray-600" dangerouslySetInnerHTML={{ __html: leader.quote }} />
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* EVENTS / GALLERY */}
       <section className="container mx-auto px-6 py-12">
         <h3 className="text-2xl font-bold text-gray-900 text-center mb-8">
-          Events & Engagements
+          Events &amp; Engagements
         </h3>
 
         <div className="relative w-full max-w-6xl mx-auto">
@@ -503,7 +651,10 @@ export default function AboutPage() {
                       style={{ objectFit: "cover" }}
                       className="transition-transform duration-300 hover:scale-105"
                       sizes="(max-width: 768px) 50vw, 33vw"
-                      onError={() => console.error(`Failed to load image: ${image}`)}
+                      onError={(e) => {
+                        console.error(`Failed to load event image: ${image}`);
+                        (e.target as HTMLImageElement).src = "/placeholder-event.jpg";
+                      }}
                     />
                     <div className="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-20 transition-all duration-300 flex items-center justify-center">
                       <div className="opacity-0 hover:opacity-100 transition-opacity duration-300 text-white text-center p-4">
@@ -556,79 +707,10 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* CAREERS */}
-      <section className="bg-white py-12">
-        <div className="container mx-auto px-6">
-          <h3 className="text-2xl font-bold text-gray-900 text-center mb-6">
-            Careers
-          </h3>
-
-          <div className="max-w-3xl mx-auto bg-emerald-50 border border-emerald-100 rounded-xl p-6">
-            <p className="text-gray-700 mb-4">
-              We&apos;re growing. If you&apos;re passionate about natural health and quality,
-              join our team.
-            </p>
-
-            {!applied ? (
-              <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <input
-                  name="name"
-                  required
-                  placeholder="Full name"
-                  className="p-3 border rounded focus:outline-none focus:ring-2 focus:ring-emerald-600"
-                  aria-label="Full name"
-                />
-                <input
-                  name="email"
-                  required
-                  type="email"
-                  placeholder="Email"
-                  className="p-3 border rounded focus:outline-none focus:ring-2 focus:ring-emerald-600"
-                  aria-label="Email address"
-                />
-                <input
-                  name="position"
-                  placeholder="Position applying for"
-                  className="p-3 border rounded focus:outline-none focus:ring-2 focus:ring-emerald-600"
-                  aria-label="Position applying for"
-                />
-                <input
-                  name="phone"
-                  placeholder="Phone"
-                  className="p-3 border rounded focus:outline-none focus:ring-2 focus:ring-emerald-600"
-                  aria-label="Phone number"
-                />
-                <textarea
-                  name="message"
-                  placeholder="Short message"
-                  className="p-3 border rounded md:col-span-2 focus:outline-none focus:ring-2 focus:ring-emerald-600"
-                  rows={4}
-                  aria-label="Short message"
-                />
-                <button
-                  type="submit"
-                  className="bg-emerald-600 text-white px-6 py-3 rounded-md md:col-span-2 hover:bg-emerald-700 transition-colors duration-200"
-                  aria-label="Submit application"
-                >
-                  Apply Now
-                </button>
-              </form>
-            ) : (
-              <div className="text-center py-8">
-                <p className="text-emerald-700 font-semibold">
-                  Thanks — your application has been received.
-                </p>
-              </div>
-            )}
-          </div>
-        </div>
-      </section>
-
-      {/* PARTNERS / LOGOS */}
       <section className="py-12 bg-gray-50">
         <div className="container mx-auto px-6">
           <h3 className="text-2xl font-bold text-gray-900 text-center mb-6">
-            Strategic Alliances & Certifications
+            Strategic Alliances &amp; Certifications
           </h3>
           <div className="flex items-center justify-center gap-8 flex-wrap">
             {[
@@ -640,10 +722,7 @@ export default function AboutPage() {
               "/a6.webp",
               "/a7.webp",
             ].map((logo, idx) => (
-              <div
-                key={idx}
-                className="w-32 h-16 flex items-center justify-center p-2"
-              >
+              <div key={idx} className="w-32 h-16 flex items-center justify-center p-2">
                 <Image
                   src={logo}
                   alt={`Alliance logo ${idx + 1}`}
@@ -651,6 +730,10 @@ export default function AboutPage() {
                   height={60}
                   style={{ objectFit: "contain" }}
                   sizes="140px"
+                  onError={(e) => {
+                    console.error(`Failed to load alliance logo: ${logo}`);
+                    (e.target as HTMLImageElement).src = "/placeholder-logo.png";
+                  }}
                 />
               </div>
             ))}

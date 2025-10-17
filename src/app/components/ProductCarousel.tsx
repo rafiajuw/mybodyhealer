@@ -7,17 +7,17 @@ import Image from "next/image";
 const products = [
   {
     name: "Zerodaks",
-    price: "$20.00",
+    price: "",
     img: "/b3.avif",
   },
   {
     name: "Sakara Mork",
-    price: "$30.00",
+    price: "",
     img: "/b2.avif",
   },
   {
     name: "NK Defense",
-    price: "$100.00",
+    price: "",
     img: "/b5.avif",
   },
 ];
