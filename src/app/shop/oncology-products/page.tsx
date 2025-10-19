@@ -43,7 +43,7 @@ export default function OncologyPage() {
   return (
     <main className="min-h-screen bg-gray-50 py-28 px-6">
       <div className="max-w-6xl mx-auto">
-        <h1 className="text-4xl mb-4 text-[#4b7a2f] font-bold">💊 Oncology Products</h1>
+        <h1 className="text-4xl mb-4 text-[#4b7a2f] font-bold">Oncology Products</h1>
         <p className="text-gray-600 mb-8">Prescription & oncology support medications (inquire for pricing & availability).</p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">

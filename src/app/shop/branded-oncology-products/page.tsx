@@ -31,7 +31,7 @@ export default function BrandedPage() {
       } else setStatus(data.message || "⚠️ Failed to send order.");
     } catch (err) {
       console.error(err);
-      setStatus("⚠️ Network error.");
+      setStatus(" Network error.");
     } finally {
       setSending(false);
       setTimeout(() => setStatus(null), 4000);
@@ -41,7 +41,7 @@ export default function BrandedPage() {
   return (
     <main className="min-h-screen bg-gray-50 py-28 px-6">
       <div className="max-w-6xl mx-auto">
-        <h1 className="text-4xl mb-4 text-[#4b7a2f] font-bold">🧬 Branded Oncology</h1>
+        <h1 className="text-4xl mb-4 text-[#4b7a2f] font-bold"> Branded Oncology</h1>
         <p className="text-gray-600 mb-8">Branded oncology therapies — contact us for availability & pricing.</p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
