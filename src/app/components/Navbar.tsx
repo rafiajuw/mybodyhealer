@@ -1,141 +1,263 @@
-'use client';
+"use client";
 
+import { useState, useEffect, useRef } from "react";
+import Link from "next/link";
 import Image from "next/image";
-import Link from 'next/link';
-import { motion, useCycle } from 'framer-motion';
-import { FiSearch, FiMenu, FiX } from 'react-icons/fi';
-import { useState, useEffect } from 'react';
-import { usePathname } from 'next/navigation';
+import { motion, AnimatePresence } from "framer-motion";
+import { FiSearch, FiMenu, FiX } from "react-icons/fi";
 
-const Navbar = () => {
-  const [isOpen, toggleOpen] = useCycle(false, true);
+// temporary demo product data (you can replace with Sanity products later)
+const allProducts = [
+  { name: "Zerodaks", category: "Herbal Supplements", href: "/shop/herbal" },
+  { name: "Sakara Mork", category: "Olive Oils & Edibles", href: "/shop/olive" },
+  { name: "NK Defense", category: "Skincare & Topicals", href: "/shop/skincare" },
+  { name: "Olive Gold", category: "Olive Oils & Edibles", href: "/shop/olive" },
+  { name: "Herbal Plus", category: "Herbal Supplements", href: "/shop/herbal" },
+];
+
+export default function Navbar() {
   const [isMobile, setIsMobile] = useState(false);
-  const pathname = usePathname();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [shopOpen, setShopOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [query, setQuery] = useState("");
+  const searchRef = useRef<HTMLDivElement>(null);
 
+  // responsive handler
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
     handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const menuVariants = {
-    open: { opacity: 1, height: 'auto', transition: { duration: 0.4, staggerChildren: 0.1 } },
-    closed: { opacity: 0, height: 0, transition: { duration: 0.3 } },
-  };
+  // close modal on outside click
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
+        setSearchOpen(false);
+      }
+    };
+    if (searchOpen) document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [searchOpen]);
 
-  const navItemVariants = { hidden: { opacity: 0, y: -10 }, visible: { opacity: 1, y: 0 } };
+  // ESC close
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => e.key === "Escape" && setSearchOpen(false);
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, []);
 
   const navItems = [
-    { name: 'Home', href: '/' },
-    { name: 'Shop', href: '/shop' },
-    { name: 'About Us', href: '/aboutus' },
-    { name: 'Service', href: '/services' },
-    { name: 'Blog', href: '/services/blogs' },
-    { name: 'Contact Us', href: '/contactus' },
+    { name: "Home", href: "/" },
+    { name: "About Us", href: "/aboutus" },
+    { name: "Services", href: "/services" },
+    { name: "Blog", href: "/services/blogs" },
+    { name: "Contact", href: "/contactus" },
   ];
 
-  return (
-    <motion.nav
-      className="fixed top-0 w-full bg-[#556B2F] shadow-md z-50"
-      initial={{ y: -80 }}
-      animate={{ y: 0 }}
-      transition={{ duration: 0.5 }}
-    >
-      <div className="container mx-auto px-6 py-4 flex justify-between items-center">
-        {/* Logo */}
-        <motion.div className="flex items-center space-x-3" whileHover={{ scale: 1.05 }}>
-          <Image
-            src="/logo.png" // اپنی logo image یہاں لگائیں
-            alt="Logo"
-            width={64} // 16*4=64px
-            height={64}
-            className="object-contain"
-          />
-          <div className="flex flex-col">
-            <Link href="/" className="text-white text-2xl font-bold tracking-wide">
-              My Body Healer
-            </Link>
-            <span className="text-white text-sm font-light font-sans">
-              just heal it, don&apos;t treat it
-            </span>
-          </div>
-        </motion.div>
+  const shopCategories = [
+    { name: "Herbal Supplements", href: "/shop/herbal" },
+    { name: "Olive Oils & Edibles", href: "/shop/olive" },
+    { name: "Skincare & Topicals", href: "/shop/skincare" },
+  ];
 
-        {/* Desktop Menu + Search */}
-        <div className="flex items-center">
+  const filteredProducts = allProducts.filter((p) =>
+    p.name.toLowerCase().includes(query.toLowerCase())
+  );
+
+  return (
+    <>
+      {/* Navbar */}
+      <motion.nav
+        className="fixed top-0 w-full bg-[#556B2F] shadow-lg z-50"
+        initial={{ y: -80 }}
+        animate={{ y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <div className="container mx-auto flex items-center justify-between px-6 py-4">
+          {/* Logo */}
+          <Link href="/" className="flex items-center space-x-3">
+            <Image
+              src="/logo.png"
+              alt="My Body Healer Logo"
+              width={55}
+              height={55}
+              className="rounded-full"
+            />
+            <div>
+              <h1 className="text-white font-bold text-xl tracking-wide">
+                My Body Healer
+              </h1>
+              <p className="text-white text-xs italic">just heal it, don’t treat it</p>
+            </div>
+          </Link>
+
+          {/* Desktop Nav */}
           {!isMobile && (
-            <ul className="flex space-x-8">
+            <ul className="flex space-x-8 items-center text-white">
+              <li
+                onMouseEnter={() => setShopOpen(true)}
+                onMouseLeave={() => setShopOpen(false)}
+                className="relative cursor-pointer"
+              >
+                <span className="hover:text-[#A3C585] font-medium transition-colors">
+                  Shop ▾
+                </span>
+
+                {/* Dropdown */}
+                <AnimatePresence>
+                {shopOpen && (
+                  <motion.ul
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="absolute top-8 left-0 bg-white text-[#556B2F] rounded-xl shadow-xl py-3 w-56"
+                  >
+                    {shopCategories.map((cat) => (
+                      <li key={cat.name}>
+                        <Link
+                          href={cat.href}
+                          className="block px-5 py-2 text-sm hover:bg-[#A3C585]/20 hover:text-[#3E5A2F] transition"
+                        >
+                          {cat.name}
+                        </Link>
+                      </li>
+                    ))}
+                  </motion.ul>
+                )}
+                </AnimatePresence>
+              </li>
+
               {navItems.map((item) => (
-                <motion.li
-                  key={item.name}
-                  variants={navItemVariants}
-                  initial="hidden"
-                  animate="visible"
-                  whileHover={{ scale: 1.05 }}
-                  className="relative group"
-                >
+                <li key={item.name}>
                   <Link
                     href={item.href}
-                    className={`transition-colors ${
-                      pathname === item.href
-                        ? 'text-yellow-300 font-semibold'
-                        : 'text-white hover:text-yellow-300'
-                    }`}
+                    className="relative group font-medium transition-all hover:text-[#A3C585]"
                   >
                     {item.name}
+                    <span className="absolute left-0 -bottom-1 w-0 h-[2px] bg-[#A3C585] group-hover:w-full transition-all duration-300"></span>
                   </Link>
-                  <span className="absolute left-0 -bottom-1 w-0 h-[2px] bg-yellow-300 group-hover:w-full transition-all" />
-                </motion.li>
+                </li>
               ))}
+              <button
+                onClick={() => setSearchOpen(true)}
+                className="text-white hover:text-[#A3C585] transition"
+              >
+                <FiSearch size={22} />
+              </button>
             </ul>
           )}
-          <motion.div whileHover={{ scale: 1.1 }} className="ml-6 cursor-pointer text-white">
-            <FiSearch size={22} />
-          </motion.div>
 
-          {/* Mobile Menu Button */}
+          {/* Mobile Menu */}
           {isMobile && (
-            <motion.button
-              onClick={() => toggleOpen()}
-              className="ml-4 text-white"
-              whileHover={{ scale: 1.1 }}
+            <button
+              className="text-white"
+              onClick={() => setMenuOpen(!menuOpen)}
             >
-              {isOpen ? <FiX size={26} /> : <FiMenu size={26} />}
-            </motion.button>
+              {menuOpen ? <FiX size={26} /> : <FiMenu size={26} />}
+            </button>
           )}
         </div>
-      </div>
 
-      {/* Mobile Dropdown Menu */}
-      {isMobile && (
-        <motion.div
-          className="overflow-hidden bg-[#556B2F] shadow-lg rounded-b-xl"
-          initial={false}
-          animate={isOpen ? 'open' : 'closed'}
-          variants={menuVariants}
-        >
-          <ul className="flex flex-col items-center space-y-6 p-6">
-            {navItems.map((item) => (
-              <motion.li key={item.name} variants={navItemVariants} whileHover={{ scale: 1.05 }}>
+        {/* Mobile Dropdown */}
+        <AnimatePresence>
+          {menuOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              className="bg-[#556B2F] text-white flex flex-col items-center py-4 space-y-4"
+            >
+              <details className="w-full px-6">
+                <summary className="cursor-pointer text-center text-lg font-medium">
+                  Shop
+                </summary>
+                <ul className="mt-2 space-y-2">
+                  {shopCategories.map((cat) => (
+                    <li key={cat.name} className="text-center">
+                      <Link href={cat.href} onClick={() => setMenuOpen(false)}>
+                        {cat.name}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </details>
+              {navItems.map((item) => (
                 <Link
+                  key={item.name}
                   href={item.href}
-                  className={`text-lg transition-colors ${
-                    pathname === item.href
-                      ? 'text-yellow-300 font-semibold'
-                      : 'text-white hover:text-yellow-300'
-                  }`}
-                  onClick={() => toggleOpen()}
+                  onClick={() => setMenuOpen(false)}
                 >
                   {item.name}
                 </Link>
-              </motion.li>
-            ))}
-          </ul>
-        </motion.div>
-      )}
-    </motion.nav>
-  );
-};
+              ))}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.nav>
 
-export default Navbar;
+      {/* 🔍 Search Modal */}
+      <AnimatePresence>
+        {searchOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-[999]"
+          >
+            <motion.div
+              ref={searchRef}
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="bg-white rounded-2xl p-8 max-w-md w-full relative shadow-2xl"
+            >
+              <button
+                className="absolute top-4 right-4 text-gray-500 hover:text-[#556B2F]"
+                onClick={() => setSearchOpen(false)}
+              >
+                <FiX size={22} />
+              </button>
+
+              <h2 className="text-xl font-semibold text-[#556B2F] mb-4 text-center">
+                Search Products
+              </h2>
+              <input
+                type="text"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Type product name..."
+                className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-[#A3C585] outline-none text-black"
+              />
+
+              <div className="mt-4 max-h-60 overflow-y-auto">
+                {query === "" ? (
+                  <p className="text-gray-400 text-center">Start typing to search...</p>
+                ) : filteredProducts.length === 0 ? (
+                  <p className="text-gray-500 text-center">No products found.</p>
+                ) : (
+                  <ul className="divide-y divide-gray-200">
+                    {filteredProducts.map((p) => (
+                      <li key={p.name} className="py-2">
+                        <Link
+                          href={p.href}
+                          className="block text-[#556B2F] hover:text-[#A3C585] font-medium"
+                          onClick={() => setSearchOpen(false)}
+                        >
+                          {p.name}
+                          <span className="block text-sm text-gray-500">{p.category}</span>
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
+  );
+}
