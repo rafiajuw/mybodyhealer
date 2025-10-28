@@ -1,3 +1,4 @@
+// components/Navbar.tsx
 "use client";
 
 import { useState, useEffect, useRef } from "react";
@@ -6,13 +7,22 @@ import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { FiSearch, FiMenu, FiX } from "react-icons/fi";
 
-// temporary demo product data (you can replace with Sanity products later)
+// === ONLY ONCOLOGY PRODUCTS FOR SEARCH ===
 const allProducts = [
-  { name: "Zerodaks", category: "Herbal Supplements", href: "/shop/herbal" },
-  { name: "Sakara Mork", category: "Olive Oils & Edibles", href: "/shop/olive" },
-  { name: "NK Defense", category: "Skincare & Topicals", href: "/shop/skincare" },
-  { name: "Olive Gold", category: "Olive Oils & Edibles", href: "/shop/olive" },
-  { name: "Herbal Plus", category: "Herbal Supplements", href: "/shop/herbal" },
+  // { name: "Ibooster", category: "Food Supplement", href: "/shop/food-supplement" },
+  // { name: "Bestman", category: "Food Supplement", href: "/shop/food-supplement" },
+  // { name: "Olive Oil", category: "Oil + Supplement", href: "/shop/olive-products" },
+  // { name: "NK Defense", category: "Food Supplement", href: "/shop/food-supplement" },
+  // { name: "Preserv Derma", category: "Derma Products", href: "/shop/derma-products" },
+
+  // ONCOLOGY PRODUCTS (ACTIVE)
+  { name: "Anastrozole", category: "Oncology", href: "/shop/products/anastrozole" },
+  { name: "Letrozole", category: "Oncology", href: "/shop/products/letrozole" },
+  { name: "Bicalutamide", category: "Oncology", href: "/shop/products/bicalutamide" },
+  { name: "Capecitabine", category: "Oncology", href: "/shop/products/capecitabine" },
+  { name: "Sunitinib", category: "Oncology", href: "/shop/products/sunitinib" },
+  { name: "Sorafenib", category: "Oncology", href: "/shop/products/sorafenib" },
+  { name: "Pazopanib", category: "Oncology", href: "/shop/products/pazopanib" },
 ];
 
 export default function Navbar() {
@@ -23,7 +33,28 @@ export default function Navbar() {
   const [query, setQuery] = useState("");
   const searchRef = useRef<HTMLDivElement>(null);
 
-  // responsive handler
+  const navItems = [
+    { name: "Home", href: "/" },
+    { name: "Shop Now", href: "/shop" },
+    { name: "About Us", href: "/aboutus" },
+    { name: "Services", href: "/services" },
+    { name: "Blog", href: "/services/blogs" },
+    { name: "Contact", href: "/contactus" },
+  ];
+
+  // ONLY ONCOLOGY IN DROPDOWN
+  const shopCategories = [
+    // { name: "Food Supplements", href: "/shop" },
+    // { name: "Oil & Supplements", href: "/shop" },
+    // { name: "Derma Products", href: "/shop" },
+    { name: "Oncology Products", href: "/shop/oncology-products" }, // Active
+  ];
+
+  const filteredProducts = allProducts.filter((p) =>
+    p.name.toLowerCase().includes(query.toLowerCase()) ||
+    p.category.toLowerCase().includes(query.toLowerCase())
+  );
+
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
     handleResize();
@@ -31,7 +62,6 @@ export default function Navbar() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // close modal on outside click
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
@@ -42,42 +72,17 @@ export default function Navbar() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [searchOpen]);
 
-  // ESC close
-  useEffect(() => {
-    const handleKey = (e: KeyboardEvent) => e.key === "Escape" && setSearchOpen(false);
-    window.addEventListener("keydown", handleKey);
-    return () => window.removeEventListener("keydown", handleKey);
-  }, []);
-
-  const navItems = [
-    { name: "Home", href: "/" },
-    { name: "About Us", href: "/aboutus" },
-    { name: "Services", href: "/services" },
-    { name: "Blog", href: "/services/blogs" },
-    { name: "Contact", href: "/contactus" },
-  ];
-
-  const shopCategories = [
-    { name: "Herbal Supplements", href: "/shop/herbal" },
-    { name: "Olive Oils & Edibles", href: "/shop/olive" },
-    { name: "Skincare & Topicals", href: "/shop/skincare" },
-  ];
-
-  const filteredProducts = allProducts.filter((p) =>
-    p.name.toLowerCase().includes(query.toLowerCase())
-  );
-
   return (
     <>
-      {/* Navbar */}
+      {/* NAVBAR */}
       <motion.nav
         className="fixed top-0 w-full bg-[#556B2F] shadow-lg z-50"
         initial={{ y: -80 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <div className="container mx-auto flex items-center justify-between px-6 py-4">
-          {/* Logo */}
+        <div className="container mx-auto flex items-center justify-between px-6 py-3">
+          {/* LOGO */}
           <Link href="/" className="flex items-center space-x-3">
             <Image
               src="/logo.png"
@@ -87,60 +92,68 @@ export default function Navbar() {
               className="rounded-full"
             />
             <div>
-              <h1 className="text-white font-bold text-xl tracking-wide">
-                My Body Healer
-              </h1>
+              <h1 className="text-white font-bold text-xl">My Body Healer</h1>
               <p className="text-white text-xs italic">just heal it, don’t treat it</p>
             </div>
           </Link>
 
-          {/* Desktop Nav */}
+          {/* DESKTOP MENU */}
           {!isMobile && (
-            <ul className="flex space-x-8 items-center text-white">
-              <li
-                onMouseEnter={() => setShopOpen(true)}
-                onMouseLeave={() => setShopOpen(false)}
-                className="relative cursor-pointer"
-              >
-                <span className="hover:text-[#A3C585] font-medium transition-colors">
-                  Shop ▾
-                </span>
+            <ul className="flex space-x-8 items-center text-white font-medium">
+              {navItems.map((item) => {
+                if (item.name === "Shop Now") {
+                  return (
+                    <li
+                      key={item.name}
+                      onMouseEnter={() => setShopOpen(true)}
+                      onMouseLeave={() => setShopOpen(false)}
+                      className="relative cursor-pointer"
+                    >
+                      <motion.div
+                        className="bg-[#A3C585] text-[#2D3E1E] px-5 py-2 rounded-full shadow-md hover:shadow-lg hover:bg-[#8FBF6F] font-semibold transition-all"
+                      >
+                        Shop Now
+                      </motion.div>
 
-                {/* Dropdown */}
-                <AnimatePresence>
-                {shopOpen && (
-                  <motion.ul
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    className="absolute top-8 left-0 bg-white text-[#556B2F] rounded-xl shadow-xl py-3 w-56"
-                  >
-                    {shopCategories.map((cat) => (
-                      <li key={cat.name}>
-                        <Link
-                          href={cat.href}
-                          className="block px-5 py-2 text-sm hover:bg-[#A3C585]/20 hover:text-[#3E5A2F] transition"
-                        >
-                          {cat.name}
-                        </Link>
-                      </li>
-                    ))}
-                  </motion.ul>
-                )}
-                </AnimatePresence>
-              </li>
+                      <AnimatePresence>
+                        {shopOpen && (
+                          <motion.ul
+                            initial={{ opacity: 0, y: -10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -10 }}
+                            className="absolute top-11 left-0 bg-white text-[#2D3E1E] rounded-xl shadow-2xl py-3 w-56 border border-gray-100"
+                          >
+                            {shopCategories.map((cat) => (
+                              <li key={cat.name}>
+                                <Link
+                                  href={cat.href}
+                                  className="block px-5 py-2 hover:bg-[#A3C585]/20 hover:text-[#4B602A] transition text-sm"
+                                >
+                                  {cat.name}
+                                </Link>
+                              </li>
+                            ))}
+                          </motion.ul>
+                        )}
+                      </AnimatePresence>
+                    </li>
+                  );
+                }
 
-              {navItems.map((item) => (
-                <li key={item.name}>
-                  <Link
-                    href={item.href}
-                    className="relative group font-medium transition-all hover:text-[#A3C585]"
-                  >
-                    {item.name}
-                    <span className="absolute left-0 -bottom-1 w-0 h-[2px] bg-[#A3C585] group-hover:w-full transition-all duration-300"></span>
-                  </Link>
-                </li>
-              ))}
+                return (
+                  <li key={item.name} className="relative group">
+                    <Link
+                      href={item.href}
+                      className="hover:text-[#A3C585] transition duration-200"
+                    >
+                      {item.name}
+                    </Link>
+                    <span className="absolute left-0 -bottom-1 w-0 h-[2px] bg-[#A3C585] group-hover:w-full transition-all duration-300" />
+                  </li>
+                );
+              })}
+
+              {/* SEARCH ICON */}
               <button
                 onClick={() => setSearchOpen(true)}
                 className="text-white hover:text-[#A3C585] transition"
@@ -150,7 +163,7 @@ export default function Navbar() {
             </ul>
           )}
 
-          {/* Mobile Menu */}
+          {/* MOBILE TOGGLE */}
           {isMobile && (
             <button
               className="text-white"
@@ -161,7 +174,7 @@ export default function Navbar() {
           )}
         </div>
 
-        {/* Mobile Dropdown */}
+        {/* MOBILE MENU */}
         <AnimatePresence>
           {menuOpen && (
             <motion.div
@@ -170,35 +183,39 @@ export default function Navbar() {
               exit={{ opacity: 0, height: 0 }}
               className="bg-[#556B2F] text-white flex flex-col items-center py-4 space-y-4"
             >
-              <details className="w-full px-6">
-                <summary className="cursor-pointer text-center text-lg font-medium">
-                  Shop
-                </summary>
-                <ul className="mt-2 space-y-2">
-                  {shopCategories.map((cat) => (
-                    <li key={cat.name} className="text-center">
-                      <Link href={cat.href} onClick={() => setMenuOpen(false)}>
-                        {cat.name}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </details>
-              {navItems.map((item) => (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  onClick={() => setMenuOpen(false)}
-                >
-                  {item.name}
-                </Link>
-              ))}
+              {navItems.map((item) =>
+                item.name === "Shop Now" ? (
+                  <details key={item.name} className="w-full px-6">
+                    <summary className="cursor-pointer text-center text-lg font-semibold">
+                      Shop Now
+                    </summary>
+                    <ul className="mt-2 space-y-2">
+                      {shopCategories.map((cat) => (
+                        <li key={cat.name} className="text-center">
+                          <Link href={cat.href} onClick={() => setMenuOpen(false)}>
+                            {cat.name}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </details>
+                ) : (
+                  <Link
+                    key={item.name}
+                    href={item.href}
+                    onClick={() => setMenuOpen(false)}
+                    className="text-lg"
+                  >
+                    {item.name}
+                  </Link>
+                )
+              )}
             </motion.div>
           )}
         </AnimatePresence>
       </motion.nav>
 
-      {/* 🔍 Search Modal */}
+      {/* SEARCH MODAL - ONLY ONCOLOGY */}
       <AnimatePresence>
         {searchOpen && (
           <motion.div
@@ -222,21 +239,22 @@ export default function Navbar() {
               </button>
 
               <h2 className="text-xl font-semibold text-[#556B2F] mb-4 text-center">
-                Search Products
+                Search Oncology Products
               </h2>
               <input
                 type="text"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Type product name..."
+                placeholder="Search Anastrozole, Letrozole..."
                 className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-[#A3C585] outline-none text-black"
+                autoFocus
               />
 
               <div className="mt-4 max-h-60 overflow-y-auto">
                 {query === "" ? (
-                  <p className="text-gray-400 text-center">Start typing to search...</p>
+                  <p className="text-gray-400 text-center">Start typing...</p>
                 ) : filteredProducts.length === 0 ? (
-                  <p className="text-gray-500 text-center">No products found.</p>
+                  <p className="text-gray-500 text-center">No oncology product found.</p>
                 ) : (
                   <ul className="divide-y divide-gray-200">
                     {filteredProducts.map((p) => (

@@ -4,36 +4,66 @@
 import { useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { PRODUCTS } from "@/app/lib/products";
 import Link from "next/link";
+import { PRODUCTS } from "@/data/Products";
 
 export default function SearchPage() {
   const [q, setQ] = useState("");
-  const filtered = PRODUCTS.filter((p) => p.name.toLowerCase().includes(q.toLowerCase()));
+  const filtered = PRODUCTS.filter(p =>
+    p.name.toLowerCase().includes(q.toLowerCase()) ||
+    p.description.toLowerCase().includes(q.toLowerCase()) ||
+    p.keyBenefits.some(b => b.toLowerCase().includes(q.toLowerCase()))
+  );
 
   return (
-    <main className="min-h-screen bg-gray-50 py-28 px-6">
-      <div className="max-w-4xl mx-auto text-center">
-        <h1 className="text-3xl text-[#4b7a2f] font-bold mb-4">Search Products</h1>
-        <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search products by name..." className="w-full p-3 rounded border" />
+    <main className="min-h-screen bg-gradient-to-b from-gray-50 to-white py-20 px-6">
+      <div className="max-w-4xl mx-auto text-center mb-12">
+        <h1 className="text-4xl font-bold text-emerald-800 mb-4">Search Oncology Products</h1>
+        <div className="relative">
+          <input
+            type="text"
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            placeholder="Search by name, benefit, or cancer type..."
+            className="w-full p-4 pl-12 text-lg rounded-full border-2 border-emerald-200 focus:border-emerald-500 focus:outline-none transition"
+          />
+          <svg className="absolute left-4 top-5 w-6 h-6 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+          {q && (
+            <button onClick={() => setQ("")} className="absolute right-4 top-5 text-emerald-500 hover:text-emerald-700">X</button>
+          )}
+        </div>
       </div>
 
-      <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mt-8">
-        {filtered.length ? filtered.map((p) => (
-          <motion.div key={p.id} whileHover={{ scale: 1.02 }} className="bg-white rounded-lg shadow p-4">
-            <div className="h-40 relative rounded overflow-hidden">
-              <Image src={p.image} alt={p.name} fill style={{ objectFit: "cover" }} />
-            </div>
-            <h3 className="mt-3 text-lg font-semibold text-[#4b7a2f]">{p.name}</h3>
-            <p className="text-sm text-gray-600">{p.description}</p>
-            <div className="mt-3 flex gap-2">
-              {/* if product is food -> link to that shop page, else to appropriate */}
-              <Link href={p.category === "food" ? "/shop/food-supplements" : p.category === "oncology" ? "/shop/oncology-products" : "/shop/branded-oncology"} className="text-sm text-white bg-[#4b7a2f] px-3 py-2 rounded">View</Link>
-              <button className="text-sm bg-gray-100 px-3 py-2 rounded">Price: {p.price}</button>
-            </div>
-          </motion.div>
-        )) : (
-          <div className="text-center col-span-full text-gray-500 mt-8">No products found.</div>
+      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+        {filtered.length > 0 ? (
+          filtered.map((p) => (
+            <motion.div
+              key={p.id}
+              whileHover={{ y: -8 }}
+              className="bg-white rounded-2xl shadow-lg overflow-hidden"
+            >
+              <div className="relative h-48">
+                <Image src={p.image} alt={p.name} fill className="object-cover" />
+              </div>
+              <div className="p-6">
+                <h3 className="text-xl font-bold text-emerald-800">{p.name}</h3>
+                <p className="text-sm text-emerald-600 mt-1">{p.dosage}</p>
+                <p className="text-gray-600 text-sm mt-2 line-clamp-2">{p.description}</p>
+                <Link
+                  href={`/shop/products/${p.slug}`}
+                  className="mt-4 block text-center bg-emerald-600 text-white py-2 rounded-lg font-medium hover:bg-emerald-700 transition"
+                >
+                  View Details
+                </Link>
+              </div>
+            </motion.div>
+          ))
+        ) : (
+          <p className="col-span-full text-center text-gray-500 text-lg py-12">
+            No products found for <strong className="text-emerald-600">&quot;{q}&quot;</strong>
+          </p>
         )}
       </div>
     </main>

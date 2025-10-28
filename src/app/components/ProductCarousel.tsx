@@ -7,17 +7,14 @@ import Image from "next/image";
 const products = [
   {
     name: "Zerodaks",
-    price: "",
     img: "/b3.avif",
   },
   {
     name: "Sakara Mork",
-    price: "",
     img: "/b2.avif",
   },
   {
     name: "NK Defense",
-    price: "",
     img: "/b5.avif",
   },
 ];
@@ -39,7 +36,7 @@ const ProductCarousel = () => {
   return (
     <section className="container mx-auto py-16 px-6">
       <h2 className="text-3xl md:text-4xl font-bold text-primary text-center mb-12">
-        🌟 Featured Products
+        Featured Products
       </h2>
 
       <div className="relative w-full max-w-lg mx-auto overflow-hidden">
@@ -64,21 +61,19 @@ const ProductCarousel = () => {
               />
             </div>
 
-            {/* Product Info */}
+            {/* Product Info - Only Name */}
             <div className="p-6 text-center">
               <h3 className="font-semibold text-lg text-primary mb-2">
                 {products[current].name}
               </h3>
-              <p className="text-gray-700 font-medium">
-                {products[current].price}
-              </p>
 
+              {/* Shop Now Button */}
               <button
-                className="mt-4 w-full bg-primary text-green py-2 px-4 rounded-xl font-semibold shadow hover:bg-primary/90 transition"
+                className="mt-4 w-full bg-primary text-white py-2 px-4 rounded-xl font-semibold shadow hover:bg-primary/90 transition"
                 onMouseEnter={() => setPaused(true)}
                 onMouseLeave={() => setPaused(false)}
               >
-                🛒 Shop Now
+                Shop Now
               </button>
             </div>
           </motion.div>
