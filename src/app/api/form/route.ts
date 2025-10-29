@@ -52,15 +52,16 @@ export async function POST(request: NextRequest) {
     }
 
     // ✅ FIXED SMTP FOR VERCEL + ONE.COM
-    const transporter = nodemailer.createTransport({
-      host: process.env.MAIL_HOST,
-      port: Number(process.env.MAIL_PORT),
-      secure: true, // Use SSL (465)
-      auth: { user: process.env.MAIL_USER, pass: process.env.MAIL_PASS },
-      tls: {
-        rejectUnauthorized: false, // ✅ CRITICAL FIX (Vercel + One.com SSL handshake)
-      },
-    });
+ const transporter = nodemailer.createTransport({
+  host: process.env.MAIL_HOST,
+  port: Number(process.env.MAIL_PORT),
+  secure: false,
+  auth: { user: process.env.MAIL_USER, pass: process.env.MAIL_PASS },
+  tls: {
+    rejectUnauthorized: false,
+  }
+});
+
 
     await transporter.verify();
 
