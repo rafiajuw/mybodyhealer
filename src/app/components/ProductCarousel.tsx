@@ -1,86 +1,97 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
+import Link from "next/link";
 
 const products = [
-  {
-    name: "Zerodaks",
-    img: "/b3.avif",
-  },
-  {
-    name: "Sakara Mork",
-    img: "/b2.avif",
-  },
-  {
-    name: "NK Defense",
-    img: "/b5.avif",
-  },
+  { name: "Anastrozole", img: "/anastrozole.webp" },
+  { name: "Letrozole", img: "/letrozole.webp" },
+  { name: "Bicalutamide", img: "/bicalutamide.jpg" },
+  { name: "Capecitabine", img: "/capecitabine.avif" },
+  { name: "Sunitinib", img: "/sunitinib.png" },
+  { name: "Sorafenib", img: "/sorafenib.webp" },
+  { name: "Pazopanib", img: "/pazopanib.webp" },
 ];
 
-const ProductCarousel = () => {
+export default function ProductCarousel() {
   const [current, setCurrent] = useState(0);
   const [paused, setPaused] = useState(false);
 
-  // Auto-slide logic
   useEffect(() => {
     if (paused) return;
     const timer = setInterval(() => {
       setCurrent((prev) => (prev + 1) % products.length);
-    }, 3000);
-
+    }, 3500);
     return () => clearInterval(timer);
   }, [paused]);
 
   return (
-    <section className="container mx-auto py-16 px-6">
-      <h2 className="text-3xl md:text-4xl font-bold text-primary text-center mb-12">
-        Featured Products
+    <section className="container mx-auto py-20 px-6">
+      <h2 className="text-4xl font-bold text-center text-emerald-800 mb-14 tracking-wide">
+        Featured Oncology Products
       </h2>
 
-      <div className="relative w-full max-w-lg mx-auto overflow-hidden">
+      <div
+        className="relative max-w-lg mx-auto"
+        onMouseEnter={() => setPaused(true)}
+        onMouseLeave={() => setPaused(false)}
+      >
         <AnimatePresence mode="wait">
           <motion.div
             key={current}
-            initial={{ opacity: 0, x: 100 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -100 }}
-            transition={{ duration: 0.7, ease: "easeInOut" }}
-            className="bg-white rounded-2xl shadow-xl"
+            initial={{ opacity: 0, scale: 0.97 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 1.03 }}
+            transition={{ duration: 0.5, ease: "easeInOut" }}
+            className="backdrop-blur-xl shadow-2xl rounded-3xl bg-white/80 border border-white/60 overflow-hidden"
           >
-            {/* Product Image */}
-            <div className="relative w-full h-60 rounded-t-2xl overflow-hidden">
+            {/* IMAGE */}
+            <div className="relative h-64 w-full overflow-hidden">
               <Image
                 src={products[current].img}
                 alt={products[current].name}
                 fill
-                className={`object-cover transition-all duration-500 ${
-                  paused ? "blur-md scale-105" : ""
-                }`}
+                className="object-cover transition-transform duration-700 hover:scale-110"
+                priority
               />
             </div>
 
-            {/* Product Info - Only Name */}
+            {/* TEXT + BUTTON */}
             <div className="p-6 text-center">
-              <h3 className="font-semibold text-lg text-primary mb-2">
+              <h3 className="text-xl font-semibold text-emerald-900 mb-3 tracking-wide">
                 {products[current].name}
               </h3>
 
-              {/* Shop Now Button */}
-              <button
-                className="mt-4 w-full bg-primary text-white py-2 px-4 rounded-xl font-semibold shadow hover:bg-primary/90 transition"
-                onMouseEnter={() => setPaused(true)}
-                onMouseLeave={() => setPaused(false)}
-              >
-                Shop Now
-              </button>
+              <Link href="/shop">
+                <motion.button
+                  whileHover={{ scale: 1.05, y: -2 }}
+                  whileTap={{ scale: 0.97 }}
+                  className="w-full py-3 rounded-xl text-white font-semibold shadow-lg 
+                  bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-700 hover:to-emerald-600 
+                  transition-all"
+                >
+                  Shop Now
+                </motion.button>
+              </Link>
             </div>
           </motion.div>
         </AnimatePresence>
+
+        {/* DOT INDICATORS */}
+        <div className="flex justify-center space-x-2 mt-5">
+          {products.map((_, i) => (
+            <div
+              key={i}
+              onClick={() => setCurrent(i)}
+              className={`h-2.5 w-2.5 rounded-full cursor-pointer transition-all duration-300 ${
+                current === i ? "bg-emerald-600 w-6" : "bg-gray-300"
+              }`}
+            />
+          ))}
+        </div>
       </div>
     </section>
   );
-};
-
-export default ProductCarousel;
+}

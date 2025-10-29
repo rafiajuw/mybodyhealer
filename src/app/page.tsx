@@ -12,9 +12,11 @@ export default function Home() {
   return (
     <main className="flex flex-col gap-16">
       <Hero />
-      <ProductCarousel />
-      <Features />
       <Introduction />
+      <ProductCarousel />
+      
+      <Features />
+      
       <Categories />
       <GlobalImpact />
       <Products />

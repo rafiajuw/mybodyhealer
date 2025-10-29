@@ -3,36 +3,63 @@
 import Image from "next/image";
 import { motion } from "framer-motion";
 
-const Features = () => {
+const features = [
+  {
+    title: "Superior Quality",
+    img: "/superior.webp",
+    desc: "We provide premium-grade wellness products crafted with precision and care to ensure maximum purity and effectiveness.",
+  },
+  {
+    title: "Always Fresh Packaging",
+    img: "/fresh.webp",
+    desc: "Our products are handled and packed with strict hygiene and freshness standards to preserve their natural potency.",
+  },
+];
+
+export default function Features() {
   return (
-    <section className="container mx-auto py-16 px-4">
-      <h2 className="text-4xl font-bold text-center text-primary mb-14 tracking-tight">
-        Why Choose Us
-      </h2>
-
-      <motion.div
-        className="bg-white/90 backdrop-blur-lg p-10 rounded-3xl shadow-lg flex flex-col items-center text-center hover:shadow-2xl transition-all duration-300 border border-gray-200"
-        whileHover={{ scale: 1.05 }}
+    <section className="container mx-auto py-20 px-6">
+      {/* Heading */}
+      <motion.h2
+        className="text-center text-4xl md:text-5xl font-extrabold text-emerald-800 mb-16 tracking-tight"
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        viewport={{ once: true }}
       >
-        <div className="relative w-24 h-24 mb-6">
-          <Image
-            src="/superior.webp"
-            alt="Superior Quality"
-            fill
-            className="object-contain"
-          />
-        </div>
+        Why Choose Us
+      </motion.h2>
 
-        <h3 className="text-2xl font-semibold text-primary mb-2">
-          Superior Quality
-        </h3>
-        <p className="text-gray-600 max-w-md text-sm leading-relaxed">
-          We offer premium grade products that meet the highest quality
-          standards to ensure a fresh and exceptional experience every time.
-        </p>
-      </motion.div>
+      {/* Feature Grid (2 columns center aligned) */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-10 max-w-4xl mx-auto">
+        {features.map((f, i) => (
+          <motion.div
+            key={i}
+            className="bg-white/70 backdrop-blur-md border border-gray-200 rounded-3xl p-10 shadow-lg text-center hover:shadow-2xl transition-all duration-300"
+            whileHover={{ y: -8, scale: 1.03 }}
+          >
+            {/* Icon */}
+            <div className="relative w-24 h-24 mx-auto mb-6">
+              <Image
+                src={f.img}
+                alt={f.title}
+                fill
+                className="object-contain drop-shadow-md"
+              />
+            </div>
+
+            {/* Title */}
+            <h3 className="text-xl font-semibold text-emerald-700 mb-3">
+              {f.title}
+            </h3>
+
+            {/* Description */}
+            <p className="text-gray-600 text-sm leading-relaxed max-w-xs mx-auto">
+              {f.desc}
+            </p>
+          </motion.div>
+        ))}
+      </div>
     </section>
   );
-};
-
-export default Features;
+}

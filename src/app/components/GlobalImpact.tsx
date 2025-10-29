@@ -12,13 +12,13 @@ interface CounterProps {
 const Counter = ({ end, duration = 2, suffix = "" }: CounterProps) => {
   const [count, setCount] = useState(0);
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true }); // start only once
+  const isInView = useInView(ref, { once: true });
 
   useEffect(() => {
     if (!isInView) return;
-
     let start = 0;
-    const increment = end / (duration * 60); // 60fps approx
+    const increment = end / (duration * 60);
+
     const handle = setInterval(() => {
       start += increment;
       if (start >= end) {
@@ -35,8 +35,8 @@ const Counter = ({ end, duration = 2, suffix = "" }: CounterProps) => {
   return (
     <motion.h3
       ref={ref}
-      className="text-5xl font-extrabold text-primary"
-      initial={{ scale: 0.7, opacity: 0 }}
+      className="text-5xl font-extrabold bg-gradient-to-r from-emerald-700 to-lime-600 bg-clip-text text-transparent drop-shadow-sm"
+      initial={{ scale: 0.8, opacity: 0 }}
       whileInView={{ scale: 1, opacity: 1 }}
       transition={{ duration: 0.8, ease: "easeOut" }}
     >
@@ -46,61 +46,50 @@ const Counter = ({ end, duration = 2, suffix = "" }: CounterProps) => {
   );
 };
 
-const GlobalImpact = () => {
+export default function GlobalImpact() {
   return (
-    <section className="container mx-auto py-16 px-6 text-center">
+    <section className="container mx-auto py-20 px-6 text-center">
       {/* Heading */}
       <motion.h2
-        className="text-3xl md:text-4xl font-bold text-primary mb-12"
+        className="text-4xl md:text-5xl font-bold text-emerald-800 tracking-tight mb-14 leading-tight"
         initial={{ y: 40, opacity: 0 }}
         whileInView={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.8, ease: "easeOut" }}
+        transition={{ duration: 0.9 }}
+        viewport={{ once: true }}
       >
-        Our Global Impact in Numbers
+        A Trusted Name in <br className="hidden md:block" /> Global Herbal & Therapeutic Wellness
       </motion.h2>
 
-      {/* Counter Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-        <motion.div
-          className="bg-white rounded-2xl shadow-xl p-6"
-          whileHover={{ scale: 1.05 }}
-          transition={{ type: "spring", stiffness: 200 }}
-        >
-          <Counter end={24} />
-          <p className="text-gray-600 mt-2">Number of Members</p>
-        </motion.div>
-
-        <motion.div
-          className="bg-white rounded-2xl shadow-xl p-6"
-          whileHover={{ scale: 1.05 }}
-          transition={{ type: "spring", stiffness: 200 }}
-        >
-          <Counter end={7} />
-          <p className="text-gray-600 mt-2">Country Presence</p>
-        </motion.div>
-
-        <motion.div
-          className="bg-white rounded-2xl shadow-xl p-6"
-          whileHover={{ scale: 1.05 }}
-          transition={{ type: "spring", stiffness: 200 }}
-        >
-          <Counter end={100} suffix="+" />
-          <p className="text-gray-600 mt-2">Number of MAs</p>
-        </motion.div>
+      {/* Counters */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-10 max-w-5xl mx-auto">
+        {[
+          { value: 24, label: "Team Members" },
+          { value: 7, label: "Countries of Presence" },
+          { value: 100, label: "Regulatory Registrations", suffix: "+" },
+        ].map((item, index) => (
+          <motion.div
+            key={index}
+            className="bg-white rounded-2xl shadow-lg hover:shadow-xl border border-gray-100 py-10 px-6 transition-all"
+            whileHover={{ y: -6 }}
+          >
+            <Counter end={item.value} suffix={item.suffix || ""} />
+            <p className="mt-3 text-gray-600 font-medium">{item.label}</p>
+          </motion.div>
+        ))}
       </div>
 
       {/* Description */}
       <motion.p
-        className="mt-10 text-gray-700 max-w-2xl mx-auto leading-relaxed"
+        className="mt-12 text-gray-700 max-w-3xl mx-auto text-lg leading-relaxed"
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
-        transition={{ delay: 0.4, duration: 0.8 }}
+        transition={{ duration: 1, delay: 0.3 }}
+        viewport={{ once: true }}
       >
-        Established in Malta in 2015, we have expanded across the globe with a
-        strong presence and impact in multiple regions.
+        Since our foundation in 2015, we have grown with a vision to make
+        advanced natural healing solutions accessible worldwide, while upholding
+        the highest standards of science, purity, and trust.
       </motion.p>
     </section>
   );
-};
-
-export default GlobalImpact;
+}

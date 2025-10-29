@@ -60,12 +60,12 @@ const Footer = () => {
           <h4 className="font-semibold text-lg">Help</h4>
           <ul className="mt-4 space-y-3">
             <li>
-              <a href="#shipping" className="flex items-center gap-2 text-gray-100 hover:text-white">
+              <a href="/shipping-terms" className="flex items-center gap-2 text-gray-100 hover:text-white">
                 🚚 Shipping
               </a>
             </li>
             <li>
-              <a href="#returns" className="flex items-center gap-2 text-gray-100 hover:text-white">
+              <a href="/returns" className="flex items-center gap-2 text-gray-100 hover:text-white">
                 ↩️ Returns
               </a>
             </li>
