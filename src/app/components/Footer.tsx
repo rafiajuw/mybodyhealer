@@ -38,18 +38,18 @@ const Footer = () => {
           <h4 className="font-semibold text-lg">Menu</h4>
           <ul className="mt-4 space-y-3">
             <li>
-              <a href="#shop" className="flex items-center gap-2 text-gray-100 hover:text-white">
-                🛒 Shop
+              <a href="/shop" className="flex items-center gap-2 text-gray-100 hover:text-white">
+                 Shop
               </a>
             </li>
             <li>
-              <a href="#about" className="flex items-center gap-2 text-gray-100 hover:text-white">
-                ℹ️ About
+              <a href="/aboutus" className="flex items-center gap-2 text-gray-100 hover:text-white">
+                About
               </a>
             </li>
             <li>
-              <a href="#contact" className="flex items-center gap-2 text-gray-100 hover:text-white">
-                ✉️ Contact
+              <a href="/contactus" className="flex items-center gap-2 text-gray-100 hover:text-white">
+                 Contact
               </a>
             </li>
           </ul>
@@ -81,7 +81,7 @@ const Footer = () => {
               <Mail className="w-4 h-4" /> support@mybodyhealer.com
             </p>
             <p className="flex items-center gap-2">
-              <Phone className="w-4 h-4" /> +92 300 1234567
+              <Phone className="w-4 h-4" /> 
             </p>
             <p className="flex items-center gap-2">
               <MapPin className="w-4 h-4" /> Karachi, Pakistan
