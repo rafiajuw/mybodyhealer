@@ -166,7 +166,7 @@ export default function ContactPage() {
               </li>
               <li className="flex items-center space-x-3">
                 <FaPhone className="text-[#4b7a2f]" />
-                <span>+92 21 12345678</span>
+                <span>+92 </span>
               </li>
               <li className="flex items-center space-x-3">
                 <FaEnvelope className="text-[#4b7a2f]" />
@@ -192,10 +192,10 @@ export default function ContactPage() {
               <a href="#" className="hover:text-[#4b7a2f]">
                 <FaTwitter size={20} />
               </a>
-              <a href="#" className="hover:text-[#4b7a2f]">
+              <a href="https://www.linkedin.com/in/my-body-healer-30457332b?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" className="hover:text-[#4b7a2f]">
                 <FaLinkedin size={20} />
               </a>
-              <a href="#" className="hover:text-[#4b7a2f]">
+              <a href="https://www.instagram.com/mybodyheal3r?igsh=OGc2amVyazducmt1" className="hover:text-[#4b7a2f]">
                 <FaInstagram size={20} />
               </a>
             </div>

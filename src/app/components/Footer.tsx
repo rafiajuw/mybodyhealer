@@ -1,4 +1,4 @@
-import { Mail, Phone, MapPin, Facebook, Instagram, Twitter } from "lucide-react";
+import { Mail, Phone, MapPin, Facebook, Instagram, Linkedin } from "lucide-react";
 import ContactForm from "./ContactForm";
 
 const Footer = () => {
@@ -19,16 +19,16 @@ const Footer = () => {
               <Facebook className="w-5 h-5" />
             </a>
             <a
-              href="#"
+              href="https://www.instagram.com/mybodyheal3r?igsh=OGc2amVyazducmt1"
               className="p-2 rounded-full bg-white/20 hover:bg-white/30 transition"
             >
               <Instagram className="w-5 h-5" />
             </a>
             <a
-              href="#"
+              href="https://www.linkedin.com/in/my-body-healer-30457332b?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"
               className="p-2 rounded-full bg-white/20 hover:bg-white/30 transition"
             >
-              <Twitter className="w-5 h-5" />
+              <Linkedin className="w-5 h-5" />
             </a>
           </div>
         </div>
@@ -61,12 +61,12 @@ const Footer = () => {
           <ul className="mt-4 space-y-3">
             <li>
               <a href="/shipping-terms" className="flex items-center gap-2 text-gray-100 hover:text-white">
-                🚚 Shipping
+                 Shipping
               </a>
             </li>
             <li>
               <a href="/returns" className="flex items-center gap-2 text-gray-100 hover:text-white">
-                ↩️ Returns
+                 Returns
               </a>
             </li>
           </ul>
