@@ -1,4 +1,5 @@
-export const dynamic = "force-dynamic"; // ✅ REQUIRED FOR VERCEL EDGE RUNTIME
+export const runtime = "nodejs";
+
 
 import { NextRequest, NextResponse } from "next/server";
 import nodemailer from "nodemailer";
@@ -51,19 +52,18 @@ export async function POST(request: NextRequest) {
       });
     }
 
-   const transporter = nodemailer.createTransport({
-  host: process.env.MAIL_HOST, // mail.mybodyhealer.pk
-  port: 465, // ✅ Always SSL
-  secure: true, // ✅ SSL Required
+  const transporter = nodemailer.createTransport({
+  host: process.env.MAIL_HOST,
+  port: 465,
+  secure: true,
   auth: {
     user: process.env.MAIL_USER,
     pass: process.env.MAIL_PASS,
   },
   tls: {
-    rejectUnauthorized: false, // ✅ prevent certificate mismatch errors
+    rejectUnauthorized: false,
   },
 });
-
 
 
 
