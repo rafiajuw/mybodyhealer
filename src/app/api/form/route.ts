@@ -51,19 +51,19 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // ✅ FIXED SMTP FOR VERCEL + ONE.COM
-const transporter = nodemailer.createTransport({
-  host: process.env.MAIL_HOST,
-  port: Number(process.env.MAIL_PORT),
-  secure: false,
+   const transporter = nodemailer.createTransport({
+  host: process.env.MAIL_HOST, // mail.mybodyhealer.pk
+  port: 465, // ✅ Always SSL
+  secure: true, // ✅ SSL Required
   auth: {
     user: process.env.MAIL_USER,
     pass: process.env.MAIL_PASS,
   },
   tls: {
-    rejectUnauthorized: false,
+    rejectUnauthorized: false, // ✅ prevent certificate mismatch errors
   },
 });
+
 
 
 
