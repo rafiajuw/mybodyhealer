@@ -1,6 +1,5 @@
 export const runtime = "nodejs";
 
-
 import { NextRequest, NextResponse } from "next/server";
 import nodemailer from "nodemailer";
 
@@ -15,25 +14,16 @@ export async function POST(request: NextRequest) {
     }
 
     const formData = await request.formData();
-    const type = (formData.get("type") as string)?.trim()?.toLowerCase();
+    const type = formData.get("type")?.toString().trim().toLowerCase();
 
     if (!type || !["order", "career", "contact", "medical"].includes(type)) {
       return NextResponse.json({ success: false, message: "Invalid form type." }, { status: 400 });
     }
 
-    const name = (formData.get("name") as string)?.trim();
-    const email = (formData.get("email") as string)?.trim();
-    const phone = (formData.get("phone") as string)?.trim() || "Not provided";
-    const message = (formData.get("message") as string)?.trim() || "No message";
-
-    // ORDER FIELDS
-    const productName = (formData.get("productName") as string)?.trim();
-    const productDosage = (formData.get("productDosage") as string)?.trim();
-    const productPackSize = (formData.get("productPackSize") as string)?.trim();
-
-    // CAREER FIELDS
-    const subject = (formData.get("subject") as string)?.trim() || "General";
-    const file = formData.get("resume") as File | null;
+    const name = formData.get("name")?.toString().trim();
+    const email = formData.get("email")?.toString().trim();
+    const phone = formData.get("phone")?.toString().trim() || "Not provided";
+    const message = formData.get("message")?.toString().trim() || "No message";
 
     if (!name || !email) {
       return NextResponse.json({ success: false, message: "Name & Email required." }, { status: 400 });
@@ -45,41 +35,39 @@ export async function POST(request: NextRequest) {
     }
 
     let attachments: any[] = [];
-    if (type === "career" && file) {
-      attachments.push({
-        filename: file.name,
-        content: Buffer.from(await file.arrayBuffer()),
-      });
+    if (type === "career") {
+      const file = formData.get("resume") as File | null;
+      if (file) {
+        attachments.push({
+          filename: file.name,
+          content: Buffer.from(await file.arrayBuffer()),
+        });
+      }
     }
 
-  const transporter = nodemailer.createTransport({
-  host: process.env.MAIL_HOST,
-  port: 465,
-  secure: true,
-  auth: {
-    user: process.env.MAIL_USER,
-    pass: process.env.MAIL_PASS,
-  },
-  tls: {
-    rejectUnauthorized: false,
-  },
-});
+    // ✅ Correct cPanel SMTP Transport
+    const transporter = nodemailer.createTransport({
+      host: process.env.MAIL_HOST,
+      port: Number(process.env.MAIL_PORT),
+      secure: true, // SSL REQUIRED
+      auth: {
+        user: process.env.MAIL_USER,
+        pass: process.env.MAIL_PASS,
+      },
+      tls: {
+        rejectUnauthorized: false, // ✅ IMPORTANT FOR CPANEL
+      },
+    });
 
-
-
-    await transporter.verify();
+    await transporter.verify().catch(() => {});
 
     let mailSubject = "";
     let htmlBody = "";
 
     if (type === "order") {
-      mailSubject = `🛒 Order Request: ${productName}`;
+      mailSubject = `🛒 Order Request from ${name}`;
       htmlBody = `
-        <h2>New Product Order</h2>
-        <p><strong>Product:</strong> ${productName}</p>
-        <p><strong>Dosage:</strong> ${productDosage}</p>
-        <p><strong>Pack:</strong> ${productPackSize}</p>
-        <hr/>
+        <h3>New Product Order Request</h3>
         <p><strong>Name:</strong> ${name}</p>
         <p><strong>Email:</strong> ${email}</p>
         <p><strong>Phone:</strong> ${phone}</p>
@@ -88,21 +76,20 @@ export async function POST(request: NextRequest) {
     }
 
     if (type === "career") {
-      mailSubject = `🧑‍💼 Career Application: ${subject} - ${name}`;
+      mailSubject = `🧑‍💼 Career Application: ${name}`;
       htmlBody = `
-        <h2>New Career Application</h2>
+        <h3>New Job Application</h3>
         <p><strong>Name:</strong> ${name}</p>
         <p><strong>Email:</strong> ${email}</p>
         <p><strong>Phone:</strong> ${phone}</p>
-        <p><strong>Position:</strong> ${subject}</p>
         <p><strong>Message:</strong><br>${message}</p>
       `;
     }
 
     if (type === "contact") {
-      mailSubject = `📩 Contact Message from ${name}`;
+      mailSubject = `📩 Contact Form Message from ${name}`;
       htmlBody = `
-        <h2>New Contact Form Message</h2>
+        <h3>New Contact Message</h3>
         <p><strong>Name:</strong> ${name}</p>
         <p><strong>Email:</strong> ${email}</p>
         <p><strong>Message:</strong><br>${message}</p>
@@ -110,9 +97,9 @@ export async function POST(request: NextRequest) {
     }
 
     if (type === "medical") {
-      mailSubject = `🩺 Medical Request from ${name}`;
+      mailSubject = `🩺 Medical Consultation Request: ${name}`;
       htmlBody = `
-        <h2>Medical Consultation Request</h2>
+        <h3>Medical Form Submission</h3>
         <p><strong>Name:</strong> ${name}</p>
         <p><strong>Email:</strong> ${email}</p>
         <p><strong>Phone:</strong> ${phone}</p>
@@ -121,7 +108,7 @@ export async function POST(request: NextRequest) {
     }
 
     await transporter.sendMail({
-      from: `"My Body Healer" <${process.env.MAIL_USER}>`,
+      from: `"MyBodyHealer" <${process.env.MAIL_USER}>`,
       to: process.env.MAIL_TO,
       replyTo: email,
       subject: mailSubject,
@@ -130,7 +117,7 @@ export async function POST(request: NextRequest) {
     });
 
     return NextResponse.json({ success: true, message: "✅ Sent Successfully!" });
-  } catch (error: any) {
+  } catch (error) {
     console.error("MAIL ERROR:", error);
     return NextResponse.json({ success: false, message: "❌ Sending Failed" }, { status: 500 });
   }
