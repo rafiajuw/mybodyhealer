@@ -13,17 +13,15 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    const formData = await request.formData();
-    const type = formData.get("type")?.toString().trim().toLowerCase();
+    // ✅ Get JSON instead of FormData
+    const body = await request.json();
 
-    if (!type || !["order", "career", "contact", "medical"].includes(type)) {
-      return NextResponse.json({ success: false, message: "Invalid form type." }, { status: 400 });
-    }
-
-    const name = formData.get("name")?.toString().trim();
-    const email = formData.get("email")?.toString().trim();
-    const phone = formData.get("phone")?.toString().trim() || "Not provided";
-    const message = formData.get("message")?.toString().trim() || "No message";
+    const type = body.type?.toString().trim().toLowerCase() || "contact";
+    const name = body.name?.toString().trim();
+    const email = body.email?.toString().trim();
+    const phone = body.phone?.toString().trim() || "Not provided";
+    const message = body.message?.toString().trim() || "No message";
+    const base64File = body.resume || null; // career form case
 
     if (!name || !email) {
       return NextResponse.json({ success: false, message: "Name & Email required." }, { status: 400 });
@@ -35,28 +33,22 @@ export async function POST(request: NextRequest) {
     }
 
     let attachments: any[] = [];
-    if (type === "career") {
-      const file = formData.get("resume") as File | null;
-      if (file) {
-        attachments.push({
-          filename: file.name,
-          content: Buffer.from(await file.arrayBuffer()),
-        });
-      }
+    if (type === "career" && base64File) {
+      attachments.push({
+        filename: "resume.pdf",
+        content: Buffer.from(base64File.split(",")[1], "base64"),
+      });
     }
 
-    // ✅ Correct cPanel SMTP Transport
     const transporter = nodemailer.createTransport({
       host: process.env.MAIL_HOST,
       port: Number(process.env.MAIL_PORT),
-      secure: true, // SSL REQUIRED
+      secure: true,
       auth: {
         user: process.env.MAIL_USER,
         pass: process.env.MAIL_PASS,
       },
-      tls: {
-        rejectUnauthorized: false, // ✅ IMPORTANT FOR CPANEL
-      },
+      tls: { rejectUnauthorized: false },
     });
 
     await transporter.verify().catch(() => {});
@@ -64,47 +56,48 @@ export async function POST(request: NextRequest) {
     let mailSubject = "";
     let htmlBody = "";
 
-    if (type === "order") {
-      mailSubject = `🛒 Order Request from ${name}`;
-      htmlBody = `
-        <h3>New Product Order Request</h3>
-        <p><strong>Name:</strong> ${name}</p>
-        <p><strong>Email:</strong> ${email}</p>
-        <p><strong>Phone:</strong> ${phone}</p>
-        <p><strong>Message:</strong><br>${message}</p>
-      `;
-    }
+    switch (type) {
+      case "order":
+        mailSubject = `🛒 Order Request from ${name}`;
+        htmlBody = `
+            <h3>New Product Order Request</h3>
+            <p><strong>Name:</strong> ${name}</p>
+            <p><strong>Email:</strong> ${email}</p>
+            <p><strong>Phone:</strong> ${phone}</p>
+            <p><strong>Message:</strong><br>${message}</p>
+        `;
+        break;
 
-    if (type === "career") {
-      mailSubject = `🧑‍💼 Career Application: ${name}`;
-      htmlBody = `
-        <h3>New Job Application</h3>
-        <p><strong>Name:</strong> ${name}</p>
-        <p><strong>Email:</strong> ${email}</p>
-        <p><strong>Phone:</strong> ${phone}</p>
-        <p><strong>Message:</strong><br>${message}</p>
-      `;
-    }
+      case "career":
+        mailSubject = `🧑‍💼 Career Application: ${name}`;
+        htmlBody = `
+            <h3>New Job Application</h3>
+            <p><strong>Name:</strong> ${name}</p>
+            <p><strong>Email:</strong> ${email}</p>
+            <p><strong>Phone:</strong> ${phone}</p>
+            <p><strong>Message:</strong><br>${message}</p>
+        `;
+        break;
 
-    if (type === "contact") {
-      mailSubject = `📩 Contact Form Message from ${name}`;
-      htmlBody = `
-        <h3>New Contact Message</h3>
-        <p><strong>Name:</strong> ${name}</p>
-        <p><strong>Email:</strong> ${email}</p>
-        <p><strong>Message:</strong><br>${message}</p>
-      `;
-    }
+      case "medical":
+        mailSubject = `🩺 Medical Consultation Request: ${name}`;
+        htmlBody = `
+            <h3>Medical Consultation Form</h3>
+            <p><strong>Name:</strong> ${name}</p>
+            <p><strong>Email:</strong> ${email}</p>
+            <p><strong>Phone:</strong> ${phone}</p>
+            <p><strong>Message:</strong><br>${message}</p>
+        `;
+        break;
 
-    if (type === "medical") {
-      mailSubject = `🩺 Medical Consultation Request: ${name}`;
-      htmlBody = `
-        <h3>Medical Form Submission</h3>
-        <p><strong>Name:</strong> ${name}</p>
-        <p><strong>Email:</strong> ${email}</p>
-        <p><strong>Phone:</strong> ${phone}</p>
-        <p><strong>Message:</strong><br>${message}</p>
-      `;
+      default: // contact
+        mailSubject = `📩 Contact Form Message from ${name}`;
+        htmlBody = `
+            <h3>New Contact Message</h3>
+            <p><strong>Name:</strong> ${name}</p>
+            <p><strong>Email:</strong> ${email}</p>
+            <p><strong>Message:</strong><br>${message}</p>
+        `;
     }
 
     await transporter.sendMail({
