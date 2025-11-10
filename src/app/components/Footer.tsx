@@ -81,7 +81,7 @@ const Footer = () => {
               <Mail className="w-4 h-4" /> support@mybodyhealer.com
             </p>
             <p className="flex items-center gap-2">
-              <Phone className="w-4 h-4" /> 
+              <Phone className="w-4 h-4" /> 0311-1000605
             </p>
             <p className="flex items-center gap-2">
               <MapPin className="w-4 h-4" /> Karachi, Pakistan

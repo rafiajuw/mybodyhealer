@@ -6,112 +6,108 @@ import nodemailer from "nodemailer";
 export async function POST(request: NextRequest) {
   try {
     const requiredEnvVars = ["MAIL_HOST", "MAIL_PORT", "MAIL_USER", "MAIL_PASS", "MAIL_TO"];
-    for (const envVar of requiredEnvVars) {
+     for (const envVar of requiredEnvVars) {
       if (!process.env[envVar]) {
         console.error(`❌ Missing env: ${envVar}`);
         return NextResponse.json({ success: false, message: "Server config error." }, { status: 500 });
       }
     }
 
-    // ✅ Get JSON instead of FormData
-    const body = await request.json();
+    const data = await request.formData();
+    const type = data.get("type")?.toString().trim().toLowerCase();
 
-    const type = body.type?.toString().trim().toLowerCase() || "contact";
-    const name = body.name?.toString().trim();
-    const email = body.email?.toString().trim();
-    const phone = body.phone?.toString().trim() || "Not provided";
-    const message = body.message?.toString().trim() || "No message";
-    const base64File = body.resume || null; // career form case
+    if (!type) return NextResponse.json({ success: false, message: "Form type missing." }, { status: 400 });
 
-    if (!name || !email) {
-      return NextResponse.json({ success: false, message: "Name & Email required." }, { status: 400 });
-    }
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      return NextResponse.json({ success: false, message: "Invalid email." }, { status: 400 });
-    }
-
-    let attachments: any[] = [];
-    if (type === "career" && base64File) {
-      attachments.push({
-        filename: "resume.pdf",
-        content: Buffer.from(base64File.split(",")[1], "base64"),
-      });
-    }
+    const name = data.get("name")?.toString().trim() || "Not Provided";
+    const email = data.get("email")?.toString().trim() || "Not Provided";
+    const phone = data.get("phone")?.toString().trim() || "Not Provided";
+    const message = data.get("message")?.toString().trim() || "Not Provided";
 
     const transporter = nodemailer.createTransport({
       host: process.env.MAIL_HOST,
       port: Number(process.env.MAIL_PORT),
       secure: true,
-      auth: {
-        user: process.env.MAIL_USER,
-        pass: process.env.MAIL_PASS,
-      },
+      auth: { user: process.env.MAIL_USER, pass: process.env.MAIL_PASS },
       tls: { rejectUnauthorized: false },
     });
 
-    await transporter.verify().catch(() => {});
+    let subject = "";
+    let html = "";
+    let attachments: any[] = [];
 
-    let mailSubject = "";
-    let htmlBody = "";
+    // ✅ ORDER FORM
+    if (type === "order") {
+      const product = data.get("product")?.toString().trim() || "Not provided";
+      subject = `🛒 Order Request - ${name}`;
+      html = `
+        <h2>Order Request</h2>
+        <p><strong>Name:</strong> ${name}</p>
+        <p><strong>Email:</strong> ${email}</p>
+        <p><strong>Phone:</strong> ${phone}</p>
+        <p><strong>Product:</strong> ${product}</p>
+        <p><strong>Message:</strong> ${message}</p>
+      `;
+    }
 
-    switch (type) {
-      case "order":
-        mailSubject = `🛒 Order Request from ${name}`;
-        htmlBody = `
-            <h3>New Product Order Request</h3>
-            <p><strong>Name:</strong> ${name}</p>
-            <p><strong>Email:</strong> ${email}</p>
-            <p><strong>Phone:</strong> ${phone}</p>
-            <p><strong>Message:</strong><br>${message}</p>
-        `;
-        break;
+    // ✅ CAREER FORM
+    if (type === "career") {
+      const resume = data.get("resume") as File | null;
+      if (resume) {
+        attachments.push({
+          filename: resume.name,
+          content: Buffer.from(await resume.arrayBuffer()),
+        });
+      }
+      subject = `🧑‍💼 Career Application - ${name}`;
+      html = `
+        <h2>Career Application</h2>
+        <p><strong>Name:</strong> ${name}</p>
+        <p><strong>Email:</strong> ${email}</p>
+        <p><strong>Phone:</strong> ${phone}</p>
+        <p><strong>Cover Message:</strong> ${message}</p>
+      `;
+    }
 
-      case "career":
-        mailSubject = `🧑‍💼 Career Application: ${name}`;
-        htmlBody = `
-            <h3>New Job Application</h3>
-            <p><strong>Name:</strong> ${name}</p>
-            <p><strong>Email:</strong> ${email}</p>
-            <p><strong>Phone:</strong> ${phone}</p>
-            <p><strong>Message:</strong><br>${message}</p>
-        `;
-        break;
+    // ✅ CONTACT FORM
+    if (type === "contact") {
+      subject = `📩 New Contact Message - ${name}`;
+      html = `
+        <h2>Contact Form</h2>
+        <p><strong>Name:</strong> ${name}</p>
+        <p><strong>Email:</strong> ${email}</p>
+        <p><strong>Message:</strong> ${message}</p>
+      `;
+    }
 
-      case "medical":
-        mailSubject = `🩺 Medical Consultation Request: ${name}`;
-        htmlBody = `
-            <h3>Medical Consultation Form</h3>
-            <p><strong>Name:</strong> ${name}</p>
-            <p><strong>Email:</strong> ${email}</p>
-            <p><strong>Phone:</strong> ${phone}</p>
-            <p><strong>Message:</strong><br>${message}</p>
-        `;
-        break;
+    // ✅ MEDICAL FORM
+    if (type === "medical") {
+      const age = data.get("age")?.toString().trim() || "Not Provided";
+      const condition = data.get("condition")?.toString().trim() || "Not Provided";
 
-      default: // contact
-        mailSubject = `📩 Contact Form Message from ${name}`;
-        htmlBody = `
-            <h3>New Contact Message</h3>
-            <p><strong>Name:</strong> ${name}</p>
-            <p><strong>Email:</strong> ${email}</p>
-            <p><strong>Message:</strong><br>${message}</p>
-        `;
+      subject = `🩺 Medical Consultation - ${name}`;
+      html = `
+        <h2>Medical Consultation Request</h2>
+        <p><strong>Name:</strong> ${name}</p>
+        <p><strong>Email:</strong> ${email}</p>
+        <p><strong>Phone:</strong> ${phone}</p>
+        <p><strong>Age:</strong> ${age}</p>
+        <p><strong>Condition / Problem:</strong> ${condition}</p>
+        <p><strong>Additional Message:</strong> ${message}</p>
+      `;
     }
 
     await transporter.sendMail({
       from: `"MyBodyHealer" <${process.env.MAIL_USER}>`,
       to: process.env.MAIL_TO,
       replyTo: email,
-      subject: mailSubject,
-      html: htmlBody,
+      subject,
+      html,
       attachments,
     });
 
-    return NextResponse.json({ success: true, message: "✅ Sent Successfully!" });
-  } catch (error) {
-    console.error("MAIL ERROR:", error);
-    return NextResponse.json({ success: false, message: "❌ Sending Failed" }, { status: 500 });
+    return NextResponse.json({ success: true, message: "✅ Message Sent Successfully!" });
+  } catch (err) {
+    console.log("MAIL ERROR:", err);
+    return NextResponse.json({ success: false, message: "❌ Mail Send Failed" }, { status: 500 });
   }
 }

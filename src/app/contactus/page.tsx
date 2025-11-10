@@ -10,6 +10,7 @@ import {
   FaLinkedin,
   FaInstagram,
 } from "react-icons/fa";
+import { motion } from "framer-motion";
 
 export default function ContactPage() {
   const images: string[] = ["/b1.avif", "/b3.avif", "/b6.avif", "/b4.avif", "/b5.avif"];
@@ -17,7 +18,7 @@ export default function ContactPage() {
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState<string | null>(null);
 
-  // 🔹 Slideshow
+  // Slideshow Effect
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % images.length);
@@ -25,13 +26,14 @@ export default function ContactPage() {
     return () => clearInterval(interval);
   }, [images.length]);
 
-  // 🔹 Form Submit Handler
+  // Form Submit — 100% Safe & Fixed
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     setStatus(null);
 
-    const formData = new FormData(e.currentTarget);
+    const form = e.currentTarget; // Safe reference
+    const formData = new FormData(form);
     formData.append("type", "contact");
 
     try {
@@ -40,168 +42,235 @@ export default function ContactPage() {
         body: formData,
       });
 
+      // Handle server errors
       if (!res.ok) {
-        throw new Error("Server error");
+        const error = await res.json().catch(() => ({ message: "Server error" }));
+        throw new Error(error.message || "Failed to connect to server");
       }
 
       const data = await res.json();
-      console.log("Server response:", data);
 
       if (data.success) {
-        setStatus("✅ Message sent successfully!");
-        e.currentTarget.reset();
-        setTimeout(() => setStatus(null), 4000);
+        setStatus("Your message has been sent successfully!");
+        form.reset(); // Safe reset
+        setTimeout(() => setStatus(null), 5000);
       } else {
-        setStatus(data.message || "⚠️ Something went wrong.");
+        setStatus(data.message || "Failed to send. Please try again.");
       }
-    } catch (err) {
-      console.error(err);
-      setStatus("⚠️ Something went wrong. Please try again.");
+    } catch (err: any) {
+      console.error("Contact form error:", err);
+      setStatus(err.message || "Network error. Please check your connection.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-white">
-      {/* 🔹 HERO SECTION */}
-      <div className="relative h-[50vh] flex items-center justify-center text-center overflow-hidden">
+    <div className="min-h-screen flex flex-col bg-gradient-to-b from-white to-gray-50">
+      {/* HERO SECTION WITH SLIDESHOW */}
+      <section className="relative h-[50vh] md:h-[60vh] flex items-center justify-center text-center overflow-hidden">
         {images.map((img, index) => (
-          <div
+          <motion.div
             key={index}
-            className={`absolute inset-0 bg-cover bg-center transition-opacity duration-1000 ${
-              index === currentIndex ? "opacity-100 scale-105" : "opacity-0"
-            }`}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: index === currentIndex ? 1 : 0 }}
+            transition={{ duration: 1.5 }}
+            className="absolute inset-0 bg-cover bg-center"
             style={{
               backgroundImage: `url(${img})`,
-              transition: "opacity 2s ease-in-out, transform 8s ease-in-out",
+              filter: "brightness(0.7)",
             }}
           />
         ))}
-        <div className="absolute inset-0 bg-black/50" />
-        <div className="relative z-10 px-6">
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 drop-shadow-lg">
+        <div className="relative z-10 px-6 max-w-4xl mx-auto">
+          <motion.h1
+            initial={{ y: -30, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.2 }}
+            className="text-4xl md:text-6xl font-bold text-white mb-4 drop-shadow-xl"
+          >
             Contact Us
-          </h1>
-          <p className="text-lg md:text-xl text-gray-200 max-w-2xl mx-auto">
+          </motion.h1>
+          <motion.p
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.4 }}
+            className="text-lg md:text-xl text-gray-100"
+          >
             Get in touch with My Body Healer for supplements, olive oil, and
             pharmaceutical supplies.
-          </p>
+          </motion.p>
         </div>
-      </div>
+      </section>
 
-      {/* 🔹 MAIN CONTENT */}
-      <div className="flex-1 bg-gray-50 py-12 px-6">
-        <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10">
-          {/* 🔹 CONTACT FORM */}
-          <form
-            onSubmit={handleSubmit}
-            className="bg-white rounded-2xl shadow-lg p-8 space-y-4"
+      {/* MAIN CONTENT */}
+      <section className="flex-1 py-12 md:py-16 px-6">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16">
+          {/* CONTACT FORM */}
+          <motion.div
+            initial={{ x: -50, opacity: 0 }}
+            whileInView={{ x: 0, opacity: 1 }}
+            transition={{ duration: 0.6 }}
+            className="bg-white rounded-3xl shadow-xl p-8 md:p-10 border border-gray-100"
           >
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-6">
               Send Us a Message
             </h2>
 
-            <input
-              type="text"
-              name="name"
-              placeholder="Your Name"
-              required
-              className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#4b7a2f] focus:border-[#4b7a2f] text-black"
-            />
-            <input
-              type="email"
-              name="email"
-              placeholder="Your Email"
-              required
-              className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#4b7a2f] focus:border-[#4b7a2f] text-black"
-            />
-            <input
-              type="text"
-              name="subject"
-              placeholder="Subject"
-              required
-              className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#4b7a2f] focus:border-[#4b7a2f] text-black"
-            />
-            <textarea
-              name="message"
-              placeholder="Your Message"
-              rows={4}
-              required
-              className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#4b7a2f] focus:border-[#4b7a2f] text-black"
-            />
+            <form onSubmit={handleSubmit} className="space-y-5">
+              <input
+                type="text"
+                name="name"
+                placeholder="Your Name *"
+                required
+                className="w-full px-5 py-3.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#4b7a2f] focus:border-[#4b7a2f] transition text-black placeholder-gray-500"
+              />
+              <input
+                type="email"
+                name="email"
+                placeholder="Your Email *"
+                required
+                className="w-full px-5 py-3.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#4b7a2f] focus:border-[#4b7a2f] transition text-black placeholder-gray-500"
+              />
+              <input
+                type="text"
+                name="subject"
+                placeholder="Subject *"
+                required
+                className="w-full px-5 py-3.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#4b7a2f] focus:border-[#4b7a2f] transition text-black placeholder-gray-500"
+              />
+              <textarea
+                name="message"
+                placeholder="Your Message *"
+                rows={5}
+                required
+                className="w-full px-5 py-3.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#4b7a2f] focus:border-[#4b7a2f] transition text-black placeholder-gray-500 resize-none"
+              />
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-[#4b7a2f] text-white py-3 rounded-lg font-semibold hover:bg-[#6fa84b] transition disabled:opacity-60"
-            >
-              {loading ? "Sending..." : "Send Message"}
-            </button>
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-[#4b7a2f] hover:bg-[#3d6325] text-white py-4 rounded-xl font-semibold text-lg transition flex items-center justify-center gap-3 disabled:opacity-60 disabled:cursor-not-allowed"
+              >
+                {loading ? (
+                  <>
+                    <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      />
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      />
+                    </svg>
+                    Sending...
+                  </>
+                ) : (
+                  "Send Message"
+                )}
+              </button>
+            </form>
 
+            {/* Status Message */}
             {status && (
-              <p
-                className={`text-center mt-2 font-medium transition-all duration-500 ${
-                  status.includes("✅")
-                    ? "text-green-600 animate-pulse"
-                    : "text-red-600"
+              <motion.p
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className={`mt-5 text-center font-medium text-lg p-3 rounded-lg ${
+                  status.includes("successfully")
+                    ? "bg-green-50 text-green-700 border border-green-200"
+                    : "bg-red-50 text-red-700 border border-red-200"
                 }`}
               >
                 {status}
-              </p>
+              </motion.p>
             )}
-          </form>
+          </motion.div>
 
-          {/* 🔹 CONTACT INFO + MAP */}
-          <div className="bg-white rounded-2xl shadow-lg p-8">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-6">
+          {/* CONTACT INFO + MAP */}
+          <motion.div
+            initial={{ x: 50, opacity: 0 }}
+            whileInView={{ x: 0, opacity: 1 }}
+            transition={{ duration: 0.6 }}
+            className="bg-white rounded-3xl shadow-xl p-8 md:p-10 border border-gray-100"
+          >
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-6">
               Our Contact Information
             </h2>
-            <ul className="space-y-4 text-gray-700 mb-6">
-              <li className="flex items-center space-x-3">
-                <FaMapMarkerAlt className="text-[#4b7a2f]" />
-                <span>
-                  Plot No. C-10/2, Shahrah-e-Faisal, Karachi, Sindh, Pakistan
-                </span>
+
+            <ul className="space-y-5 text-gray-700 mb-8">
+              <li className="flex items-start gap-3">
+                <FaMapMarkerAlt className="text-[#4b7a2f] mt-1" size={20} />
+                <div>
+                  <strong>Address:</strong>
+                  <p className="mt-1">
+                    Plot No. C-10/2, Shahrah-e-Faisal,<br />
+                    Karachi, Sindh, Pakistan
+                  </p>
+                </div>
               </li>
-              <li className="flex items-center space-x-3">
-                <FaPhone className="text-[#4b7a2f]" />
-                <span>+92 </span>
+              <li className="flex items-center gap-3">
+                <FaPhone className="text-[#4b7a2f]" size={20} />
+                <a href="tel:+923001234567" className="hover:text-[#4b7a2f] transition">
+                  +92 311-1000605
+                </a>
               </li>
-              <li className="flex items-center space-x-3">
-                <FaEnvelope className="text-[#4b7a2f]" />
-                <span>info@mybodyhealer.com</span>
+              <li className="flex items-center gap-3">
+                <FaEnvelope className="text-[#4b7a2f]" size={20} />
+                <a href="mailto:info@mybodyhealer.com" className="hover:text-[#4b7a2f] transition break-all">
+                  info@mybodyhealer.com
+                </a>
               </li>
             </ul>
 
-            <div className="rounded-xl overflow-hidden shadow-md mb-6">
+            {/* Google Map */}
+            <div className="rounded-2xl overflow-hidden shadow-lg mb-8">
               <iframe
-                src="https://www.google.com/maps?q=Plot%20No.%20C-10%2F2%2C%20Shahrah-e-Faisal%2C%20Karachi%2C%20Sindh%2C%20Pakistan&output=embed"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3619.234!2d67.034!3d24.860!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3eb33e70b7b8b8b7%3A0x7g7g7g7g7g7g7g7g!2sPlot%20No.%20C-10%2F2%2C%20Shahrah-e-Faisal%2C%20Karachi!5e0!3m2!1sen!2s!4v1698765432101!5m2!1sen!2s"
                 width="100%"
-                height="250"
+                height="280"
                 style={{ border: 0 }}
                 allowFullScreen
                 loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                title="My Body Healer Location"
               />
             </div>
 
-            <div className="flex space-x-4 text-gray-600">
-              <a href="#" className="hover:text-[#4b7a2f]">
-                <FaFacebook size={20} />
+            {/* Social Links */}
+            <div className="flex justify-center gap-6 text-gray-600">
+              <a href="#" className="hover:text-[#4b7a2f] transition transform hover:scale-110">
+                <FaFacebook size={24} />
               </a>
-              <a href="#" className="hover:text-[#4b7a2f]">
-                <FaTwitter size={20} />
+              <a href="#" className="hover:text-[#4b7a2f] transition transform hover:scale-110">
+                <FaTwitter size={24} />
               </a>
-              <a href="https://www.linkedin.com/in/my-body-healer-30457332b?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" className="hover:text-[#4b7a2f]">
-                <FaLinkedin size={20} />
+              <a
+                href="https://www.linkedin.com/in/my-body-healer-30457332b"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-[#4b7a2f] transition transform hover:scale-110"
+              >
+                <FaLinkedin size={24} />
               </a>
-              <a href="https://www.instagram.com/mybodyheal3r?igsh=OGc2amVyazducmt1" className="hover:text-[#4b7a2f]">
-                <FaInstagram size={20} />
+              <a
+                href="https://www.instagram.com/mybodyheal3r"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-[#4b7a2f] transition transform hover:scale-110"
+              >
+                <FaInstagram size={24} />
               </a>
             </div>
-          </div>
+          </motion.div>
         </div>
-      </div>
+      </section>
     </div>
   );
 }

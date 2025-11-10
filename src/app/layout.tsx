@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/app/components/Navbar";
+import WhatsAppButton from "./components/Whatsup";
 import Footer from "@/app/components/Footer";
 
 
@@ -27,6 +28,7 @@ export default function RootLayout({
         <Navbar /> 
         <main className="pt-20"> {/* ✅ Corrected self-closing tag */}
         {children}
+        < WhatsAppButton />
         <Footer/></main> 
       </body>
     </html>

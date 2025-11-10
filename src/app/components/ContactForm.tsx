@@ -22,14 +22,21 @@ const ContactForm = () => {
     setLoading(true);
     setStatus("");
 
+    const data = new FormData();
+    data.append("type", "contact"); // ✅ IMPORTANT
+    data.append("name", formData.name);
+    data.append("email", formData.email);
+    data.append("message", formData.message);
+
     try {
-      const res = await fetch("/api/contact", {
+      const res = await fetch("/api/form", { // ✅ your single route.ts
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: data,
       });
 
-      if (res.ok) {
+      const result = await res.json();
+
+      if (result.success) {
         setStatus("✅ Message sent successfully!");
         setFormData({ name: "", email: "", message: "" });
       } else {
