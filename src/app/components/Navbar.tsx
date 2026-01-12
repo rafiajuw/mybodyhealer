@@ -43,7 +43,8 @@ const foodSupplements = [
   href: `/shop/food-supplements/${p.toLowerCase().replace(/\s+/g, "-")}`,
 }));
 
-// Others
+// Others - Commented out as requested
+/*
 const structuredWater = [
   { name: "Uni-Vie Structured Water", href: "/shop/structured-water/uni-vie" },
 ];
@@ -53,13 +54,15 @@ const oils = [{ name: "Olive Oil", href: "/shop/oils/olive-oil" }];
 const dermaProducts = [
   { name: "Preserv Derma", href: "/shop/derma/preserv-derma" },
 ];
+*/
 
+// Only Oncology + Food Supplements will be searchable now
 const allProducts = [
   ...oncologyProducts,
   ...foodSupplements,
-  ...structuredWater,
-  ...oils,
-  ...dermaProducts,
+  // ...structuredWater,
+  // ...oils,
+  // ...dermaProducts,
 ];
 
 /* ================= COMPONENT ================= */
@@ -134,9 +137,9 @@ export default function Navbar() {
                   >
                     <LinkItem href="/shop/oncology-products" text="Oncology Medicines" />
                     <LinkItem href="/shop/food-supplements" text="Food Supplements" />
-                    <LinkItem href="/shop/structured-water" text="Structured Water" />
-                    <LinkItem href="/shop/oils" text="Oils" />
-                    <LinkItem href="/shop/derma" text="Derma Products" />
+                    {/* <LinkItem href="/shop/structured-water" text="Structured Water" /> */}
+                    {/* <LinkItem href="/shop/oils" text="Oils" /> */}
+                    {/* <LinkItem href="/shop/derma" text="Derma Products" /> */}
                   </motion.ul>
                 )}
               </AnimatePresence>
