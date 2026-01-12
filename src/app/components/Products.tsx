@@ -5,7 +5,7 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import Link from "next/link";
 
-// Combined list of featured products (Oncology + Food Supplements)
+// Combined list of featured products (Oncology + selected Food Supplements)
 const featuredProducts = [
   // Oncology Products
   { name: "Anastrozole", img: "/anastrozole.webp", category: "Oncology" },
@@ -13,13 +13,12 @@ const featuredProducts = [
   { name: "Bicalutamide", img: "/bicalutamide.jpg", category: "Oncology" },
   { name: "Capecitabine", img: "/capecitabine.avif", category: "Oncology" },
   
-  // Food Supplements
-  { name: "Ibooster", img: "/ibooster.jpg", category: "Food Supplement" },
-  { name: "Bestman", img: "/bestman.jpg", category: "Food Supplement" },
-  { name: "Femopause", img: "/femopause.jpg", category: "Food Supplement" },
-  { name: "Origin Collagen", img: "/origin-collagen.jpg", category: "Food Supplement" },
-  { name: "Goutrol", img: "/goutrol.jpg", category: "Food Supplement" },
-  { name: "Prostatol", img: "/prostatol.jpg", category: "Food Supplement" },
+  // Selected Food Supplements (only the ones you kept)
+  { name: "Mormiks",       img: "/b4.avif",       category: "Food Supplement" },
+  { name: "Zeredemiks",    img: "/b5.avif",    category: "Food Supplement" },
+  { name: "Lifmo",         img: "/b3.avif",         category: "Food Supplement" },
+  { name: "Olive Oil",     img: "/olive2.avif",     category: "Food Supplement" },
+  { name: "NK Defense",    img: "/foodsupplement/nk.png",    category: "Food Supplement" },
 ];
 
 export default function Products() {
