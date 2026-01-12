@@ -8,7 +8,7 @@ export const FOOD_SUPPLEMENTS: Product[] = [
     name: "Mormiks",
     dosage: "Capsule",
     packSize: "30 capsules",
-    image: "/foodsupplement/mormix.png",
+    image: "/b4.avif",
     description: "Natural food coloring + supplement blend with purple fruit and vegetable extracts (rich in anthocyanins) for overall wellness, anti-aging, and blood sugar/glucose support.",
     category: "food-supplement",
     keyBenefits: ["Natural coloring", "Antioxidant support", "Heart & blood sugar balance"]
@@ -19,7 +19,7 @@ export const FOOD_SUPPLEMENTS: Product[] = [
     name: "Zeredemiks",
     dosage: "Capsule",
     packSize: "30 capsules",
-    image: "/foodsupplement/zerdemiks.png",
+    image: "/b5.avif",
     description: "Food coloring + supplement blend for enhanced nutrition and vitality.",
     category: "food-supplement",
     keyBenefits: ["Natural food coloring", "Vitality boost", "Nutrient-rich"]
@@ -30,7 +30,7 @@ export const FOOD_SUPPLEMENTS: Product[] = [
     name: "Lifmo",
     dosage: "Powder",  // Often sold as powder blend
     packSize: "30 servings",
-    image: "/foodsupplement/lifmo.png",
+    image: "/b3.avif",
     description: "High-fiber prebiotic supplement enriched with soluble/insoluble fibers and anthocyanins from sources like black carrot, mulberry, and aronia for gut health and blood sugar management.",
     category: "food-supplement",
     keyBenefits: ["Gut health support", "Blood sugar & weight management", "Rich in antioxidants"]
@@ -41,7 +41,7 @@ export const FOOD_SUPPLEMENTS: Product[] = [
     name: "Olive Oil",
     dosage: "Liquid",
     packSize: "Various (e.g., 500ml bottle)",
-    image: "/foodsupplement/oliveoil.png",
+    image: "/olive2.avif",
     description: "Premium extra virgin olive oil as a natural oil + supplement, rich in monounsaturated fats, antioxidants, and anti-inflammatory compounds.",
     category: "food-supplement",
     keyBenefits: ["Heart health", "Anti-inflammatory", "Antioxidant protection"]
