@@ -10,14 +10,17 @@ import { FiSearch, FiMenu, FiX } from "react-icons/fi";
 
 // Oncology
 const oncologyProducts = [
-  { name: "Anastrozole", href: "/shop/oncology-products/anastrozole" },
-  { name: "Letrozole", href: "/shop/oncology-products/letrozole" },
-  { name: "Bicalutamide", href: "/shop/oncology-products/bicalutamide" },
-  { name: "Capecitabine", href: "/shop/oncology-products/capecitabine" },
-  { name: "Sunitinib", href: "/shop/oncology-products/sunitinib" },
-  { name: "Sorafenib", href: "/shop/oncology-products/sorafenib" },
-  { name: "Pazopanib", href: "/shop/oncology-products/pazopanib" },
-];
+  "Anastrozole",
+  "Letrozole",
+  "Bicalutamide",
+  "Capecitabine",
+  "Sunitinib",
+  "Sorafenib",
+  "Pazopanib",
+].map((p) => ({
+  name: p,
+  href: `/shop/oncology/${p.toLowerCase()}`,
+}));
 
 // Food Supplements
 const foodSupplements = [
@@ -42,7 +45,7 @@ const foodSupplements = [
 
 // Others
 const structuredWater = [
-  { name: "Uni-Vie", href: "/shop/structured-water/uni-vie" },
+  { name: "Uni-Vie Structured Water", href: "/shop/structured-water/uni-vie" },
 ];
 
 const oils = [{ name: "Olive Oil", href: "/shop/oils/olive-oil" }];
@@ -85,36 +88,39 @@ export default function Navbar() {
 
   return (
     <>
+      {/* NAVBAR */}
       <motion.nav
-        className="fixed top-0 w-full bg-[#556B2F] z-50 shadow-lg"
-        initial={{ y: -60 }}
+        className="fixed top-0 w-full bg-[#556B2F] z-50 shadow-xl"
+        initial={{ y: -80 }}
         animate={{ y: 0 }}
       >
-        <div className="container mx-auto flex items-center justify-between px-6 py-3">
+        <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-3">
 
           {/* LOGO */}
-          <Link href="/" className="flex items-center space-x-3">
-            <Image src="/logo.png" width={55} height={55} alt="Logo" />
-            <div>
-              <h1 className="text-white font-bold text-xl">My Body Healer</h1>
-              <p className="text-white text-xs italic">
+          <Link href="/" className="flex items-center gap-3">
+            <Image src="/logo.png" width={54} height={54} alt="My Body Healer" />
+            <div className="leading-tight">
+              <h1 className="text-white font-bold text-lg">
+                My Body Healer
+              </h1>
+              <p className="text-xs italic text-emerald-100">
                 just heal it, don’t treat it
               </p>
             </div>
           </Link>
 
           {/* DESKTOP MENU */}
-          <ul className="hidden md:flex items-center space-x-8 text-white">
+          <ul className="hidden md:flex items-center gap-8 text-white font-medium">
 
             <NavItem href="/">Home</NavItem>
 
-            {/* SHOP NOW */}
+            {/* SHOP */}
             <li
               className="relative"
               onMouseEnter={() => setShopOpen(true)}
               onMouseLeave={() => setShopOpen(false)}
             >
-              <div className="bg-[#A3C585] text-[#2D3E1E] px-4 py-2 rounded-full cursor-pointer font-semibold">
+              <div className="bg-[#A3C585] text-[#2D3E1E] px-5 py-2 rounded-full cursor-pointer font-semibold">
                 Shop Now ▾
               </div>
 
@@ -124,12 +130,12 @@ export default function Navbar() {
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
-                    className="absolute top-12 w-64 bg-[#2D3E1E] rounded-xl shadow-2xl border border-[#A3C585]/40 overflow-hidden"
+                    className="absolute top-12 left-0 w-64 bg-[#2D3E1E] rounded-xl shadow-2xl overflow-hidden"
                   >
-                    <LinkItem href="/shop/oncology-products" text="Oncology Products" />
+                    <LinkItem href="/shop/oncology-products" text="Oncology Medicines" />
                     <LinkItem href="/shop/food-supplements" text="Food Supplements" />
                     <LinkItem href="/shop/structured-water" text="Structured Water" />
-                    <LinkItem href="/shop/oils" text="Oil" />
+                    <LinkItem href="/shop/oils" text="Oils" />
                     <LinkItem href="/shop/derma" text="Derma Products" />
                   </motion.ul>
                 )}
@@ -146,7 +152,7 @@ export default function Navbar() {
             </button>
           </ul>
 
-          {/* MOBILE ICON */}
+          {/* MOBILE */}
           <button
             className="md:hidden text-white"
             onClick={() => setMenuOpen(!menuOpen)}
@@ -159,17 +165,22 @@ export default function Navbar() {
       {/* SEARCH MODAL */}
       <AnimatePresence>
         {searchOpen && (
-          <motion.div className="fixed inset-0 bg-black/70 z-[999] flex items-center justify-center">
+          <motion.div
+            className="fixed inset-0 bg-black/70 z-[999] flex items-center justify-center"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
             <motion.div
               ref={searchRef}
-              className="bg-white w-full max-w-md p-6 rounded-2xl"
+              className="bg-white w-full max-w-md p-6 rounded-2xl shadow-2xl"
             >
               <input
                 type="text"
                 placeholder="Search products..."
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                className="w-full border px-4 py-3 rounded-lg"
+                className="w-full border px-4 py-3 rounded-lg focus:ring-2 focus:ring-emerald-600"
               />
 
               <div className="mt-4 max-h-60 overflow-y-auto">
@@ -179,7 +190,7 @@ export default function Navbar() {
                       key={p.name}
                       href={p.href}
                       onClick={() => setSearchOpen(false)}
-                      className="block py-2 border-b hover:text-[#A3C585]"
+                      className="block py-2 border-b hover:text-emerald-600"
                     >
                       {p.name}
                     </Link>
@@ -200,7 +211,7 @@ export default function Navbar() {
 
 /* ================= REUSABLE ================= */
 
-function NavItem({ href, children }: any) {
+function NavItem({ href, children }: { href: string; children: React.ReactNode }) {
   return (
     <Link href={href} className="hover:text-[#A3C585] transition">
       {children}
@@ -208,7 +219,7 @@ function NavItem({ href, children }: any) {
   );
 }
 
-function LinkItem({ href, text }: any) {
+function LinkItem({ href, text }: { href: string; text: string }) {
   return (
     <li>
       <Link

@@ -1,5 +1,7 @@
-// src/data/Products.ts
-export const PRODUCTS = [
+// src/data/oncology.ts
+import { type Product } from "@/types/product";
+
+export const ONCOLOGY_PRODUCTS: Product[] = [
   {
     id: 1,
     slug: "anastrozole",

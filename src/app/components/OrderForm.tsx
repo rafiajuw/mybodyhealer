@@ -1,12 +1,13 @@
-// src/app/components/OrderForm.tsx
 "use client";
 
 import { X } from "lucide-react";
+import { FormEvent } from "react";
 
 interface Product {
   name: string;
-  dosage: string;
-  packSize: string;
+  dosage?: string;
+  packSize?: string;
+  category?: string;
 }
 
 interface Props {
@@ -15,23 +16,26 @@ interface Props {
 }
 
 export default function OrderForm({ product, onClose }: Props) {
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const form = e.target as HTMLFormElement;
+
+    const form = e.currentTarget;
     const data = new FormData(form);
 
-    data.append("type", "order"); // ✅ server ko form type mil jayega
+    // ✅ meta data
+    data.append("type", "order");
     data.append("productName", product.name);
-    data.append("productDosage", product.dosage);
-    data.append("productPackSize", product.packSize);
+    data.append("productCategory", product.category || "N/A");
+    if (product.dosage) data.append("productDosage", product.dosage);
+    if (product.packSize) data.append("productPackSize", product.packSize);
 
-    // ✅ Correct Route (same as your single route.ts)
     const res = await fetch("/api/form", {
       method: "POST",
       body: data,
     });
 
     const result = await res.json();
+
     alert(result.message);
 
     if (result.success) {
@@ -41,22 +45,64 @@ export default function OrderForm({ product, onClose }: Props) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-      <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full relative">
-        <button onClick={onClose} className="absolute top-4 right-4 text-gray-500 hover:text-gray-700">
-          <X size={24} />
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
+      <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full relative animate-in fade-in zoom-in">
+
+        {/* CLOSE */}
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+        >
+          <X size={22} />
         </button>
 
-        <h2 className="text-2xl font-bold text-emerald-800 mb-2">Order {product.name}</h2>
-        <p className="text-sm text-emerald-600 mb-6">{product.dosage} • {product.packSize}</p>
+        {/* HEADER */}
+        <h2 className="text-2xl font-bold text-emerald-800">
+          Order {product.name}
+        </h2>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <input name="name" placeholder="Full Name" required className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-emerald-500" />
-          <input name="email" type="email" placeholder="Email" required className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-emerald-500" />
-          <input name="phone" placeholder="Phone Number" required className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-emerald-500" />
-          <textarea name="message" placeholder="Quantity, delivery address, etc." rows={3} className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-emerald-500" />
+        {(product.dosage || product.packSize) && (
+          <p className="text-sm text-emerald-600 mt-1 mb-4">
+            {product.dosage}
+            {product.packSize && ` • ${product.packSize}`}
+          </p>
+        )}
 
-          <button type="submit" className="w-full bg-emerald-600 text-white font-bold py-3 rounded-lg hover:bg-emerald-700 transition">
+        {/* FORM */}
+        <form onSubmit={handleSubmit} className="space-y-4 mt-6">
+          <input
+            name="name"
+            required
+            placeholder="Full Name"
+            className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none"
+          />
+
+          <input
+            name="email"
+            type="email"
+            required
+            placeholder="Email Address"
+            className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none"
+          />
+
+          <input
+            name="phone"
+            required
+            placeholder="Phone / WhatsApp Number"
+            className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none"
+          />
+
+          <textarea
+            name="message"
+            rows={3}
+            placeholder="Quantity, city, delivery address etc."
+            className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none"
+          />
+
+          <button
+            type="submit"
+            className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-lg transition"
+          >
             Send Order Request
           </button>
         </form>
