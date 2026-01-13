@@ -135,7 +135,7 @@ export default function Navbar() {
                     exit={{ opacity: 0, y: -10 }}
                     className="absolute top-12 left-0 w-64 bg-[#2D3E1E] rounded-xl shadow-2xl overflow-hidden"
                   >
-                    <LinkItem href="/shop/oncology-products" text="Oncology Medicines" />
+                    {/* <LinkItem href="/shop/oncology-products" text="Oncology Medicines" /> */}
                     <LinkItem href="/shop/food-supplements" text="Food Supplements" />
                     {/* <LinkItem href="/shop/structured-water" text="Structured Water" /> */}
                     {/* <LinkItem href="/shop/oils" text="Oils" /> */}
