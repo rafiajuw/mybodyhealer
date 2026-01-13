@@ -6,13 +6,11 @@ import Image from "next/image";
 import Link from "next/link";
 
 const products = [
-  { name: "Anastrozole", img: "/anastrozole.webp" },
-  { name: "Letrozole", img: "/letrozole.webp" },
-  { name: "Bicalutamide", img: "/bicalutamide.jpg" },
-  { name: "Capecitabine", img: "/capecitabine.avif" },
-  { name: "Sunitinib", img: "/sunitinib.png" },
-  { name: "Sorafenib", img: "/sorafenib.webp" },
-  { name: "Pazopanib", img: "/pazopanib.webp" },
+  { name: "Mormiks", img: "/b4.avif" },
+  { name: "Zeredemiks", img: "/b5.avif" },
+  { name: "Lifmo", img: "/b3.avif" },
+  { name: "Olive Oil", img: "/olive1.avif" },
+  { name: "NK Defense", img: "/" },
 ];
 
 export default function ProductCarousel() {
@@ -30,7 +28,7 @@ export default function ProductCarousel() {
   return (
     <section className="container mx-auto py-20 px-6">
       <h2 className="text-4xl font-bold text-center text-emerald-800 mb-14 tracking-wide">
-        Featured Oncology Products
+        Featured Food Supplements
       </h2>
 
       <div
