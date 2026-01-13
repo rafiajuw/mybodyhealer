@@ -10,7 +10,7 @@ const products = [
   { name: "Zeredemiks", img: "/b5.avif" },
   { name: "Lifmo", img: "/b3.avif" },
   { name: "Olive Oil", img: "/olive1.avif" },
-  { name: "NK Defense", img: "/" },
+  { name: "NK Defense", img: "/b6.avif" },
 ];
 
 export default function ProductCarousel() {
