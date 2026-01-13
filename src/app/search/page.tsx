@@ -5,12 +5,12 @@ import { useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { ONCOLOGY_PRODUCTS } from "@/data/oncology";
-import { FOOD_SUPPLEMENTS } from "@/data/foodsupplements"; // adjust filename if needed
+// import { ONCOLOGY_PRODUCTS } from "@/data/oncology"; // DISABLED
+import { FOOD_SUPPLEMENTS } from "@/data/foodsupplements";
 
 // Combine both categories for global search
 const ALL_PRODUCTS = [
-  ...ONCOLOGY_PRODUCTS.map(p => ({ ...p, categoryLabel: "Oncology" })),
+  // ...ONCOLOGY_PRODUCTS.map(p => ({ ...p, categoryLabel: "Oncology" })), // DISABLED
   ...FOOD_SUPPLEMENTS.map(p => ({ ...p, categoryLabel: "Food Supplement" })),
 ];
 

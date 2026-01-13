@@ -8,7 +8,8 @@ import { FiSearch, FiMenu, FiX } from "react-icons/fi";
 
 /* ================= SEARCH DATA ================= */
 
-// Oncology
+// Oncology - DISABLED
+/*
 const oncologyProducts = [
   "Anastrozole",
   "Letrozole",
@@ -21,6 +22,8 @@ const oncologyProducts = [
   name: p,
   href: `/shop/oncology/${p.toLowerCase()}`,
 }));
+*/
+const oncologyProducts: { name: string; href: string }[] = [];
 
 // Food Supplements
 const foodSupplements = [

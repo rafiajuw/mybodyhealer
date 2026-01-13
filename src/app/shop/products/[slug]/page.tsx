@@ -1,12 +1,12 @@
 // src/app/shop/products/[slug]/page.tsx
 import { notFound } from 'next/navigation';
-import { ONCOLOGY_PRODUCTS } from '@/data/oncology';
-import { FOOD_SUPPLEMENTS } from '@/data/foodsupplements'; // ← corrected filename (most common convention)
-import ProductDetailsClient from '@/app/shop/products/[slug]/ProductDetailsClient'; // ← recommended location
+// import { ONCOLOGY_PRODUCTS } from '@/data/oncology'; // DISABLED
+import { FOOD_SUPPLEMENTS } from '@/data/foodsupplements';
+import ProductDetailsClient from '@/app/shop/products/[slug]/ProductDetailsClient';
 
 // Combine all products in one array (ensure slugs are unique!)
 const ALL_PRODUCTS = [
-  ...ONCOLOGY_PRODUCTS,
+  // ...ONCOLOGY_PRODUCTS, // DISABLED
   ...FOOD_SUPPLEMENTS,
   // ... add other categories later if needed (e.g. ...HERBAL_PRODUCTS)
 ];

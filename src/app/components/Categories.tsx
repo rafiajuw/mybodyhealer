@@ -17,12 +17,12 @@ const categories = [
     img: "/olive.avif",
     hoverImg: "/olive1.avif",
   },
-  {
-    title: "Oncology Medicines",
-    href: "/shop",
-    img: "/b4.avif",
-    hoverImg: "/b5.avif",
-  },
+  // {
+  //   title: "Oncology Medicines", // DISABLED
+  //   href: "/shop",
+  //   img: "/b4.avif",
+  //   hoverImg: "/b5.avif",
+  // },
 ];
 
 export default function Categories() {

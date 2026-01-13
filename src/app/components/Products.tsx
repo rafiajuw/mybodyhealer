@@ -5,13 +5,15 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import Link from "next/link";
 
-// Combined list of featured products (Oncology + selected Food Supplements)
+// Combined list of featured products (Food Supplements only - Oncology DISABLED)
 const featuredProducts = [
-  // Oncology Products
+  // Oncology Products - DISABLED
+  /*
   { name: "Anastrozole", img: "/anastrozole.webp", category: "Oncology" },
   { name: "Letrozole", img: "/letrozole.webp", category: "Oncology" },
   { name: "Bicalutamide", img: "/bicalutamide.jpg", category: "Oncology" },
   { name: "Capecitabine", img: "/capecitabine.avif", category: "Oncology" },
+  */
   
   // Selected Food Supplements (only the ones you kept)
   { name: "Mormiks",       img: "/b4.avif",       category: "Food Supplement" },

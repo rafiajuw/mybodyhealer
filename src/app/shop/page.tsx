@@ -1,11 +1,11 @@
 // src/app/shop/page.tsx
 import ProductCard from "@/app/components/ProductCard";
-import { ONCOLOGY_PRODUCTS } from "@/data/oncology";
+// import { ONCOLOGY_PRODUCTS } from "@/data/oncology"; // DISABLED
 import { FOOD_SUPPLEMENTS } from "@/data/foodsupplements";
 
 // Combine both categories into one array
 const ALL_PRODUCTS = [
-  ...ONCOLOGY_PRODUCTS,
+  // ...ONCOLOGY_PRODUCTS, // DISABLED
   ...FOOD_SUPPLEMENTS,
 ];
 
