@@ -27,23 +27,14 @@ const oncologyProducts: { name: string; href: string }[] = [];
 
 // Food Supplements
 const foodSupplements = [
-  "Ibooster",
-  "Bestman",
-  "Femopause",
-  "Fibromya",
-  "Goutrol",
-  "Prostatol",
-  "Urinol",
-  "Mormiks",
-  "Zeredemiks",
-  "Lifmo",
-  "NK Defense",
-  "GSH Complex",
-  "Triozyme",
-  "Origin Collagen",
+  { name: "Mormiks", slug: "mormiks" },
+  { name: "Zerdemiks", slug: "zeredemiks" },
+  { name: "Lifmo", slug: "lifmo" },
+  { name: "Olive Oil", slug: "olive-oil" },
+  { name: "NK Defence", slug: "nk-defense" },
 ].map((p) => ({
-  name: p,
-  href: `/shop/food-supplements/${p.toLowerCase().replace(/\s+/g, "-")}`,
+  name: p.name,
+  href: `/shop/products/${p.slug}`,
 }));
 
 // Others - Commented out as requested
@@ -73,6 +64,7 @@ const allProducts = [
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [shopOpen, setShopOpen] = useState(false);
+  const [foodSuppsOpen, setFoodSuppsOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState("");
 
@@ -136,10 +128,46 @@ export default function Navbar() {
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
-                    className="absolute top-12 left-0 w-64 bg-[#2D3E1E] rounded-xl shadow-2xl overflow-hidden"
+                    className="absolute top-12 left-0 w-80 bg-[#2D3E1E] rounded-xl shadow-2xl overflow-visible z-40"
                   >
+                    {/* FOOD SUPPLEMENTS WITH SUBMENU */}
+                    <li
+                      className="relative"
+                      onMouseEnter={() => setFoodSuppsOpen(true)}
+                      onMouseLeave={() => setFoodSuppsOpen(false)}
+                    >
+                      <Link
+                        href="/shop/food-supplements"
+                        className="block px-5 py-3 text-white hover:bg-[#A3C585] hover:text-[#2D3E1E] transition font-medium"
+                      >
+                        Food Supplements ▾
+                      </Link>
+
+                      <AnimatePresence>
+                        {foodSuppsOpen && (
+                          <motion.div
+                            initial={{ opacity: 0, x: 10 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: 10 }}
+                            className="absolute left-full top-0 w-64 bg-[#3D4E2E] rounded-xl shadow-2xl overflow-hidden border-l-4 border-[#A3C585] ml-2 z-50"
+                          >
+                            <ul className="max-h-80 overflow-y-auto">
+                              {foodSupplements.map((product) => (
+                                <li key={product.name}>
+                                  <Link
+                                    href={product.href}
+                                    className="block px-5 py-3 text-white text-sm hover:bg-[#A3C585] hover:text-[#2D3E1E] transition border-b border-[#556B2F] last:border-b-0"
+                                  >
+                                    {product.name}
+                                  </Link>
+                                </li>
+                              ))}
+                            </ul>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </li>
                     {/* <LinkItem href="/shop/oncology-products" text="Oncology Medicines" /> */}
-                    <LinkItem href="/shop/food-supplements" text="Food Supplements" />
                     {/* <LinkItem href="/shop/structured-water" text="Structured Water" /> */}
                     {/* <LinkItem href="/shop/oils" text="Oils" /> */}
                     {/* <LinkItem href="/shop/derma" text="Derma Products" /> */}
