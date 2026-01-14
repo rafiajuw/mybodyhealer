@@ -84,7 +84,7 @@ export default function Products() {
                 {product.name}
               </h3>
 
-              <Link href="/shop/products" className="mt-auto">
+              <Link href="/shop" className="mt-auto">
                 <motion.button
                   whileHover={{ scale: 1.08, y: -3 }}
                   whileTap={{ scale: 0.95 }}
