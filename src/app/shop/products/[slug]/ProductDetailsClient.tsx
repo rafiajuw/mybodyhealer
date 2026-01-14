@@ -13,7 +13,6 @@ export default function ProductDetailsClient({ product }: any) {
     { id: "overview", label: "Overview" },
     { id: "usage", label: "Intended Usage" },
     { id: "composition", label: "Composition" },
-    { id: "compliance", label: "Compliance & Certificates" },
     { id: "technical", label: "Technical Information" },
   ];
 
@@ -21,7 +20,7 @@ export default function ProductDetailsClient({ product }: any) {
     <>
       <div className="min-h-screen bg-gradient-to-b from-emerald-50 via-white to-gray-50">
         {/* Header with Back Button */}
-        <div className="bg-white border-b border-emerald-100 py-6 px-6 sticky top-0 z-10">
+        <div className="bg-white border-b border-emerald-100 py-6 px-6 sticky top-0 z-10 backdrop-blur-sm bg-white/95">
           <div className="max-w-7xl mx-auto">
             <Link
               href="/shop/food-supplements"
@@ -36,14 +35,14 @@ export default function ProductDetailsClient({ product }: any) {
         <div className="py-16 px-6">
           <div className="max-w-7xl mx-auto">
             <div className="grid lg:grid-cols-2 gap-12 items-start mb-16">
-              {/* Product Image */}
+              {/* Product Image with Zoom Effect */}
               <div className="flex flex-col items-center">
-                <div className="relative w-full h-96 md:h-[500px] rounded-3xl overflow-hidden shadow-2xl bg-white p-8">
+                <div className="relative w-full h-96 md:h-[500px] rounded-3xl overflow-hidden shadow-2xl bg-white p-8 group cursor-pointer">
                   <Image
                     src={product.image}
                     alt={product.name}
                     fill
-                    className="object-contain"
+                    className="object-contain transition-transform duration-500 ease-in-out group-hover:scale-110"
                     priority
                   />
                 </div>
@@ -91,7 +90,7 @@ export default function ProductDetailsClient({ product }: any) {
             </div>
 
             {/* Tabs Section */}
-            <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+            <div className="bg-white rounded-2xl shadow-lg overflow-hidden mb-16">
               {/* Tab Navigation */}
               <div className="border-b border-gray-200 flex overflow-x-auto">
                 {tabs.map((tab) => (
@@ -157,27 +156,6 @@ export default function ProductDetailsClient({ product }: any) {
                   </div>
                 )}
 
-                {/* Compliance Tab */}
-                {activeTab === "compliance" && (
-                  <div className="space-y-6">
-                    <div>
-                      <h3 className="text-2xl font-bold text-gray-900 mb-4">Certifications & Compliance</h3>
-                      {product.certificates && product.certificates.length > 0 ? (
-                        <div className="grid md:grid-cols-2 gap-4">
-                          {product.certificates.map((cert: string, idx: number) => (
-                            <div key={idx} className="bg-emerald-50 border-2 border-emerald-200 p-4 rounded-lg flex items-center gap-3">
-                              <span className="text-2xl">🏆</span>
-                              <span className="text-gray-800 font-semibold">{cert}</span>
-                            </div>
-                          ))}
-                        </div>
-                      ) : (
-                        <p className="text-gray-700">Certification information available upon request</p>
-                      )}
-                    </div>
-                  </div>
-                )}
-
                 {/* Technical Info Tab */}
                 {activeTab === "technical" && (
                   <div className="space-y-6">
@@ -194,32 +172,37 @@ export default function ProductDetailsClient({ product }: any) {
               </div>
             </div>
 
-            {/* Sankara Partnership Info */}
-            <div className="mt-12 bg-gradient-to-r from-emerald-600 to-emerald-700 rounded-2xl p-8 text-white">
-              <h3 className="text-2xl font-bold mb-4">About Sankara Partnership</h3>
-              <p className="leading-relaxed mb-4">
-                All our food supplements are exclusively sourced from Sankara Beyin ve Biyoteknoloji Araştırma Merkezi
-                (Sankara Brain and Biotechnology Research Center) - Turkey's first Thematic R&D Center established by the private sector.
-              </p>
-              <div className="grid md:grid-cols-2 gap-4 text-sm">
-                <div>
-                  <p className="font-semibold">📍 Location</p>
-                  <p>Istanbul University-Cerrahpaşa Avcılar Campus, Turkey</p>
+            {/* Certifications Section - Compact & Clean at Bottom */}
+            {product.certificates && product.certificates.length > 0 && (
+              <div className="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100">
+                <div className="px-8 py-6 border-b border-gray-200">
+                  <h2 className="text-2xl font-bold text-gray-900">Certifications & Compliance</h2>
+                  <p className="text-gray-600 text-sm mt-1">Quality standards and regulatory approvals</p>
                 </div>
-                <div>
-                  <p className="font-semibold">📞 Contact</p>
-                  <p>+90 (212) 691 60 69 | info@sankara.com.tr</p>
-                </div>
-                <div>
-                  <p className="font-semibold">🌐 Website</p>
-                  <p>https://sankara.com.tr/</p>
-                </div>
-                <div>
-                  <p className="font-semibold">🏢 Facility</p>
-                  <p>3100 m² research and production facilities</p>
+                
+                <div className="p-8">
+                  <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                    {product.certificates.map((cert: string, idx: number) => (
+                      <div 
+                        key={idx}
+                        className="bg-emerald-50 border border-emerald-200 rounded-lg px-4 py-3 hover:bg-emerald-100 hover:border-emerald-300 transition-all duration-200"
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="flex-shrink-0 w-8 h-8 bg-emerald-600 rounded-full flex items-center justify-center">
+                            <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                            </svg>
+                          </div>
+                          <span className="text-gray-800 font-semibold text-sm leading-tight">
+                            {cert}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
       </div>

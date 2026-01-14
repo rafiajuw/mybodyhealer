@@ -10,68 +10,72 @@ type Props = {
 };
 
 export default function ProductDetailsClient({ product }: Props) {
-  const [open, setOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
     <>
       <section className="min-h-screen bg-gradient-to-b from-gray-50 to-white py-20 px-6">
-        <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-10">
-          
-          {/* IMAGE */}
-          <div className="relative h-96 rounded-2xl overflow-hidden shadow-xl">
+        <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-10 lg:gap-16">
+          {/* Product Image */}
+          <div className="relative aspect-square md:aspect-[4/5] rounded-2xl overflow-hidden shadow-2xl">
             <Image
-              src={product.image}
-              alt={product.name}
+              src={product.image || "/placeholder.jpg"}
+              alt={product.name || "Product image"}
               fill
-              className="object-cover"
+              className="object-cover transition-transform duration-700 hover:scale-105"
               priority
+              sizes="(max-width: 768px) 100vw, 50vw"
             />
           </div>
 
-          {/* CONTENT */}
-          <div>
-            <h1 className="text-4xl font-bold text-emerald-800">
+          {/* Product Content */}
+          <div className="flex flex-col">
+            <h1 className="text-4xl md:text-5xl font-bold text-emerald-800 mb-3">
               {product.name}
             </h1>
 
             {(product.dosage || product.packSize) && (
-              <p className="text-sm text-emerald-600 mt-2">
-                {product.dosage} {product.packSize && `• ${product.packSize}`}
+              <p className="text-lg text-emerald-600 font-medium mb-6">
+                {product.dosage || ""}
+                {product.packSize ? ` • ${product.packSize}` : ""}
               </p>
             )}
 
-            <p className="mt-6 text-gray-700 leading-relaxed">
+            <p className="text-gray-700 leading-relaxed text-lg mb-8">
               {product.description}
             </p>
 
-            {/* BENEFITS */}
-            {product.keyBenefits && (
-              <ul className="mt-6 space-y-2">
-                {product.keyBenefits.map((benefit, index) => (
-                  <li
-                    key={index}
-                    className="flex items-center text-gray-700"
-                  >
-                    <span className="w-2 h-2 bg-emerald-600 rounded-full mr-3" />
-                    {benefit}
-                  </li>
-                ))}
-              </ul>
+            {product.keyBenefits && product.keyBenefits.length > 0 && (
+              <div className="mb-10">
+                <h3 className="text-xl font-semibold text-gray-800 mb-4">
+                  Key Benefits
+                </h3>
+                <ul className="space-y-3">
+                  {product.keyBenefits.map((benefit, index) => (
+                    <li key={index} className="flex items-start text-gray-700">
+                      <span className="w-2 h-2 bg-emerald-600 rounded-full mt-2.5 mr-3 flex-shrink-0" />
+                      {benefit}
+                    </li>
+                  ))}
+                </ul>
+              </div>
             )}
 
             <button
-              onClick={() => setOpen(true)}
-              className="mt-8 w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-4 rounded-xl shadow-lg transition"
+              onClick={() => setIsOpen(true)}
+              className="mt-auto w-full md:w-auto max-w-sm bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-lg py-4 px-8 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
             >
-              Order Now
+              Order Now →
             </button>
           </div>
         </div>
       </section>
 
-      {/* ORDER MODAL */}
-      {open && (
-        <OrderForm product={product} onClose={() => setOpen(false)} />
+      {isOpen && (
+        <OrderForm 
+          product={product} 
+          onClose={() => setIsOpen(false)} 
+        />
       )}
     </>
   );
