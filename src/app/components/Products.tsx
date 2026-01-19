@@ -90,7 +90,7 @@ export default function Products() {
                   whileTap={{ scale: 0.95 }}
                   className="w-full py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-500 text-white font-semibold shadow-md hover:shadow-lg transition"
                 >
-                  Shop Now →
+                  COD
                 </motion.button>
               </Link>
             </div>

@@ -65,7 +65,7 @@ export default function ProductDetailsClient({ product }: Props) {
               onClick={() => setIsOpen(true)}
               className="mt-auto w-full md:w-auto max-w-sm bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-lg py-4 px-8 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
             >
-              Order Now →
+              COD
             </button>
           </div>
         </div>

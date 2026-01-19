@@ -60,7 +60,7 @@ export default function ProductCard({ product }: ProductCardProps) {
               onClick={() => setOrderOpen(true)}
               className="flex-1 px-5 py-3 rounded-lg bg-emerald-600 text-white text-sm font-medium hover:bg-emerald-700 transition-colors"
             >
-              Order Now
+              COD
             </button>
           </div>
         </div>

@@ -70,7 +70,7 @@ export default function ProductCarousel() {
                   bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-700 hover:to-emerald-600 
                   transition-all"
                 >
-                  Shop Now
+                  COD
                 </motion.button>
               </Link>
             </div>
