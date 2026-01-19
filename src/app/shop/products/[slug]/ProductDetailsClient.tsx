@@ -7,21 +7,18 @@ import OrderForm from "@/app/components/OrderForm";
 
 export default function ProductDetailsClient({ product }: any) {
   const [open, setOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState("overview");
-  const [showAdditional, setShowAdditional] = useState(true);
-  const [showHighlights, setShowHighlights] = useState(true);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  // Multiple images for carousel (fallback images)
+  // ================== IMAGES ==================
   const productImages = [
-    product.image,
-    product.imageAlt1 || "/images/product-alt-1.jpg",
-    product.imageAlt2 || "/images/product-alt-2.jpg",
-    product.imagePackaging || "/images/product-packaging.jpg",
-  ].filter(Boolean);
+    product.image, // Main image always first
+    ...(product.imageAlt1 ? [product.imageAlt1] : []),
+    ...(product.imageAlt2 ? [product.imageAlt2] : []),
+    ...(product.imagePackaging ? [product.imagePackaging] : []),
+  ];
 
-  // Highlights
+  // ================== HIGHLIGHTS ==================
   const highlights = product.highlights || [
     "100% Vegan",
     "Gluten Free",
@@ -31,7 +28,7 @@ export default function ProductDetailsClient({ product }: any) {
     "Rich in Anthocyanins",
   ];
 
-  // Additional Information with icons
+  // ================== ADDITIONAL INFO ==================
   const additionalInfo = [
     { icon: "❄️", text: "Store in a cool and moisture-free place out of sunlight. The Recommended Consumption Date (TETT) and Batch Number (PN) are on the packaging." },
     { icon: "🌡️", text: "Store below 25°C in a dry and cool place." },
@@ -43,7 +40,7 @@ export default function ProductDetailsClient({ product }: any) {
     { icon: "🏭", text: "Manufactured in accordance with GMP, ISO 9001 and ISO 22000 standards." },
   ];
 
-  // FAQ items
+  // ================== FAQ ==================
   const faqItems = [
     { q: "Is this product suitable for vegans?", a: "Yes, 100% vegan – no animal ingredients or gelatin." },
     { q: "Is it gluten-free?", a: "Yes, completely gluten-free and suitable for celiac individuals." },
@@ -52,7 +49,7 @@ export default function ProductDetailsClient({ product }: any) {
     { q: "Can I take it during pregnancy?", a: "Please consult your doctor first." },
   ];
 
-  // Sample reviews
+  // ================== REVIEWS ==================
   const reviews = [
     { name: "Ayesha K.", rating: 5, date: "Dec 15, 2025", text: "Energy levels improved a lot, digestion better. Very satisfied!" },
     { name: "Muhammad R.", rating: 4, date: "Jan 8, 2026", text: "Clean ingredients, no aftertaste. Capsule a bit large." },
@@ -62,7 +59,7 @@ export default function ProductDetailsClient({ product }: any) {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-emerald-50 via-white to-gray-50 pb-16">
-      {/* Back button header */}
+      {/* ================== BACK BUTTON ================== */}
       <div className="bg-white border-b border-emerald-100 py-4 px-4 sm:px-6 sticky top-0 z-20 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto">
           <Link href="/shop/food-supplements" className="inline-flex items-center gap-2 text-emerald-700 hover:text-emerald-800 font-medium">
@@ -72,9 +69,9 @@ export default function ProductDetailsClient({ product }: any) {
       </div>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
-        {/* ======================== GALLERY + MAIN INFO ======================== */}
+        {/* ================== GALLERY + INFO ================== */}
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 mb-16">
-          {/* Image Carousel */}
+          {/* IMAGE CAROUSEL */}
           <div className="space-y-4 lg:space-y-6">
             <div className="relative aspect-square rounded-2xl overflow-hidden shadow-2xl bg-white border border-gray-100">
               <Image
@@ -83,7 +80,6 @@ export default function ProductDetailsClient({ product }: any) {
                 fill
                 className="object-contain p-6 sm:p-10 transition-transform duration-700 hover:scale-[1.03]"
                 priority
-                sizes="(max-width: 768px) 100vw, 50vw"
               />
             </div>
 
@@ -106,22 +102,20 @@ export default function ProductDetailsClient({ product }: any) {
             )}
           </div>
 
-          {/* Product Info */}
+          {/* PRODUCT INFO */}
           <div className="flex flex-col">
             <div className="inline-block bg-emerald-100 text-emerald-800 px-4 py-1.5 rounded-full text-sm font-medium mb-4 w-fit">
               {product.category?.replace("-", " ")?.toUpperCase() || "SUPPLEMENT"}
             </div>
 
-            <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-3 leading-tight">
-              {product.name}
-            </h1>
+            <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-3 leading-tight">{product.name}</h1>
 
             <div className="flex flex-wrap gap-3 mb-8">
               {product.dosage && <span className="bg-emerald-50 px-4 py-2 rounded-lg text-emerald-800 font-medium">{product.dosage}</span>}
               {product.packSize && <span className="bg-emerald-50 px-4 py-2 rounded-lg text-emerald-800 font-medium">{product.packSize}</span>}
             </div>
 
-            {/* Key Benefits */}
+            {/* KEY BENEFITS */}
             {product.keyBenefits?.length > 0 && (
               <div className="mb-10 bg-emerald-50/60 p-6 rounded-xl border border-emerald-100/50">
                 <h3 className="text-lg font-bold text-gray-900 mb-4">Key Benefits</h3>
@@ -140,12 +134,12 @@ export default function ProductDetailsClient({ product }: any) {
               onClick={() => setOpen(true)}
               className="mt-auto w-full bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white font-bold py-4 px-8 rounded-xl shadow-lg transition-all hover:shadow-xl hover:scale-[1.02] active:scale-100"
             >
-              COD
+              Cash on Delivery
             </button>
           </div>
         </div>
 
-        {/* ======================== HIGHLIGHTS ======================== */}
+        {/* ================== HIGHLIGHTS ================== */}
         <section className="bg-white rounded-2xl shadow-sm border border-gray-100/70 p-6 lg:p-8 mb-12">
           <h2 className="text-2xl font-bold text-gray-900 mb-6">Key Highlights</h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 sm:gap-6">
@@ -161,7 +155,7 @@ export default function ProductDetailsClient({ product }: any) {
           </div>
         </section>
 
-        {/* ======================== ADDITIONAL INFORMATION ======================== */}
+        {/* ================== ADDITIONAL INFORMATION ================== */}
         <section className="bg-white rounded-2xl shadow-sm border border-gray-100/70 p-6 lg:p-8 mb-12">
           <h2 className="text-2xl font-bold text-gray-900 mb-6">Additional Information</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -177,7 +171,7 @@ export default function ProductDetailsClient({ product }: any) {
           </div>
         </section>
 
-        {/* ======================== FAQ ======================== */}
+        {/* ================== FAQ ================== */}
         <section className="bg-white rounded-2xl shadow-sm border border-gray-100/70 overflow-hidden mb-12">
           <div className="px-6 py-5 border-b border-gray-100">
             <h2 className="text-2xl font-bold text-gray-900">Frequently Asked Questions</h2>
@@ -204,7 +198,7 @@ export default function ProductDetailsClient({ product }: any) {
           </div>
         </section>
 
-        {/* ======================== CUSTOMER REVIEWS ======================== */}
+        {/* ================== CUSTOMER REVIEWS ================== */}
         <section className="bg-white rounded-2xl shadow-sm border border-gray-100/70 p-6 lg:p-8">
           <h2 className="text-2xl font-bold text-gray-900 mb-6">Customer Reviews</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -220,9 +214,7 @@ export default function ProductDetailsClient({ product }: any) {
                   </div>
                   <div className="flex">
                     {[...Array(5)].map((_, s) => (
-                      <span key={s} className={`text-lg ${s < review.rating ? "text-yellow-400" : "text-gray-300"}`}>
-                        ★
-                      </span>
+                      <span key={s} className={`text-lg ${s < review.rating ? "text-yellow-400" : "text-gray-300"}`}>★</span>
                     ))}
                   </div>
                 </div>
@@ -232,20 +224,10 @@ export default function ProductDetailsClient({ product }: any) {
           </div>
         </section>
 
-        {/* ======================== INGREDIENTS BREAKDOWN (COMMENTED) ======================== */}
+        {/* ================== INGREDIENTS BREAKDOWN (COMMENTED) ================== */}
         {/*
         <section className="bg-white rounded-2xl shadow-sm border border-gray-100/70 p-6 lg:p-8 mb-12 overflow-x-auto">
           <h2 className="text-2xl font-bold text-gray-900 mb-6">Ingredients Breakdown</h2>
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900">Ingredient</th>
-                <th className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900">Amount</th>
-                <th className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900">% Daily Value*</th>
-                <th className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900">Notes</th>
-              </tr>
-            </thead>
-          </table>
         </section>
         */}
       </main>
