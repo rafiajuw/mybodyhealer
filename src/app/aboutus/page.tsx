@@ -339,7 +339,7 @@ export default function AboutPage() {
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               whileInView={{ opacity: 1, x: 0 }}
-              className="bg-emerald-50 piddleware-6 rounded-xl border border-emerald-100"
+              className="bg-emerald-50 p-6 rounded-xl border border-emerald-100"
             >
               <h4 className="font-semibold text-emerald-700">Vision</h4>
               <p className="text-sm text-gray-700 mt-2">To be a global leader in natural healing</p>

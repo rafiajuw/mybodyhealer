@@ -7,22 +7,16 @@ import { motion } from "framer-motion";
 const categories = [
   {
     title: "Food Supplements",
-    href: "/shop",
+    href: "/shop/food-supplements",
     img: "/b1.avif",
     hoverImg: "/b2.avif",
   },
   {
     title: "Olive Oils & Edibles",
-    href: "/shop",
+    href: "/shop/products/olive-oil",
     img: "/olive.avif",
-    hoverImg: "/olive1.avif",
+    hoverImg: "/olive2.avif",
   },
-  // {
-  //   title: "Oncology Medicines", // DISABLED
-  //   href: "/shop",
-  //   img: "/b4.avif",
-  //   hoverImg: "/b5.avif",
-  // },
 ];
 
 export default function Categories() {
@@ -41,7 +35,7 @@ export default function Categories() {
       </motion.h2>
 
       {/* Category Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-10 max-w-4xl mx-auto">
         {categories.map((cat, index) => (
           <motion.div
             key={index}

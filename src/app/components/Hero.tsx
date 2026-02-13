@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import { FiArrowRight } from 'react-icons/fi';
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 
 const Hero = () => {
   // ✅ Images list
@@ -62,22 +63,24 @@ const Hero = () => {
         </motion.h1>
 
         <motion.p
-          className="text-lg md:text-xl text-gray-200 mb-6 drop-shadow-md"
+          className="text-lg md:text-xl text-gray-200 mb-8 drop-shadow-md max-w-xl mx-auto"
           initial={{ y: 50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.5, duration: 0.8, ease: 'easeOut' }}
         >
-          My Body Healer modern facility is ISO 9001 certified...
+          My Body Healer modern facility is ISO 9001 certified, delivering natural science-backed wellness solutions.
         </motion.p>
 
-        <motion.button
-          className="bg-primary text-white px-8 py-3 rounded-full flex items-center justify-center gap-2 hover:bg-accent shadow-lg transition duration-300"
-          whileHover={{ scale: 1.08 }}
-          whileTap={{ scale: 0.95 }}
-        >
-          <span className="font-semibold">Explore Now</span>
-          <FiArrowRight size={20} />
-        </motion.button>
+        <Link href="/shop">
+          <motion.button
+            className="bg-[#A3C585] text-[#2D3E1E] px-8 py-3.5 rounded-full flex items-center justify-center gap-2 hover:bg-[#8FB870] shadow-lg transition duration-300 font-semibold mx-auto"
+            whileHover={{ scale: 1.08 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            Explore Now
+            <FiArrowRight size={18} />
+          </motion.button>
+        </Link>
       </div>
     </section>
   );

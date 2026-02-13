@@ -6,7 +6,6 @@ import {
   FaPhone,
   FaEnvelope,
   FaFacebook,
-  FaTwitter,
   FaLinkedin,
   FaInstagram,
 } from "react-icons/fa";
@@ -244,28 +243,30 @@ export default function ContactPage() {
             </div>
 
             {/* Social Links */}
-            <div className="flex justify-center gap-6 text-gray-600">
-              <a href="#" className="hover:text-[#4b7a2f] transition transform hover:scale-110">
-                <FaFacebook size={24} />
-              </a>
-              <a href="#" className="hover:text-[#4b7a2f] transition transform hover:scale-110">
-                <FaTwitter size={24} />
-              </a>
+            <div className="flex justify-center gap-4 text-gray-600">
               <a
-                href="https://www.linkedin.com/in/my-body-healer-30457332b"
+                href="https://www.facebook.com/mybodyhealer"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:text-[#4b7a2f] transition transform hover:scale-110"
+                className="p-2.5 rounded-full bg-gray-100 hover:bg-[#4b7a2f] hover:text-white transition-all duration-300 hover:scale-110"
               >
-                <FaLinkedin size={24} />
+                <FaFacebook size={20} />
               </a>
               <a
                 href="https://www.instagram.com/mybodyheal3r"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:text-[#4b7a2f] transition transform hover:scale-110"
+                className="p-2.5 rounded-full bg-gray-100 hover:bg-[#4b7a2f] hover:text-white transition-all duration-300 hover:scale-110"
               >
-                <FaInstagram size={24} />
+                <FaInstagram size={20} />
+              </a>
+              <a
+                href="https://www.linkedin.com/in/my-body-healer-30457332b"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-2.5 rounded-full bg-gray-100 hover:bg-[#4b7a2f] hover:text-white transition-all duration-300 hover:scale-110"
+              >
+                <FaLinkedin size={20} />
               </a>
             </div>
           </motion.div>

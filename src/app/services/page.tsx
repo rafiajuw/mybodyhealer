@@ -125,7 +125,7 @@ export default function ServicePage() {
               standards with guaranteed quality and compliance.
             </p>
             <Link href="/services/licenced">
-              <button className="mt-6 bg-green-900 text-white px-5 py-2 rounded-lg hover:bg-green-600 transition self-start">
+              <button className="mt-6 bg-[#2D3E1E] text-white px-6 py-2.5 rounded-lg hover:bg-[#A3C585] hover:text-[#2D3E1E] transition-all self-start font-medium">
                 Read More
               </button>
             </Link>
@@ -137,7 +137,7 @@ export default function ServicePage() {
               manufacturing, and development solutions.
             </p>
             <Link href="/services/contract">
-              <button className="mt-6 bg-green-900 text-white px-5 py-2 rounded-lg hover:bg-green-600 transition self-start">
+              <button className="mt-6 bg-[#2D3E1E] text-white px-6 py-2.5 rounded-lg hover:bg-[#A3C585] hover:text-[#2D3E1E] transition-all self-start font-medium">
                 Read More
               </button>
             </Link>
@@ -146,22 +146,20 @@ export default function ServicePage() {
       </section>
 
       {/* Newsletter Section */}
-      <section className="py-16 px-6 md:px-20 text-center">
-        <h2 className="text-3xl font-bold mb-4">Subscribe to Our Newsletter</h2>
+      <section className="py-16 px-6 md:px-20 text-center bg-gradient-to-b from-emerald-50 to-white">
+        <h2 className="text-3xl font-bold mb-4 text-emerald-800">Subscribe to Our Newsletter</h2>
         <p className="text-gray-600 mb-6">
           Stay updated with the latest news and services we offer.
         </p>
-        <div className="flex justify-center gap-4">
+        <div className="flex flex-col sm:flex-row justify-center gap-4 max-w-md mx-auto">
           <input
             type="email"
             placeholder="Enter your email"
-            className="px-4 py-3 rounded-lg border w-72 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="px-4 py-3 rounded-lg border flex-1 focus:outline-none focus:ring-2 focus:ring-emerald-500"
           />
-          <Link href="/subscribe">
-            <button className="bg-green-900 text-white px-6 py-3 rounded-lg hover:bg-green-600 transition">
-              Subscribe
-            </button>
-          </Link>
+          <button className="bg-[#2D3E1E] text-white px-6 py-3 rounded-lg hover:bg-[#A3C585] hover:text-[#2D3E1E] transition-all font-medium">
+            Subscribe
+          </button>
         </div>
       </section>
 
@@ -202,22 +200,21 @@ export default function ServicePage() {
       </section>
 
       {/* Features Section */}
-      <section className="py-16 px-6 md:px-20 grid md:grid-cols-4 gap-8 text-center">
-        <div className="flex flex-col items-center">
-          <FaShippingFast className="text-4xl text-blue-600 mb-4" />
-          <h3 className="font-semibold">Free Shipping</h3>
-        </div>
-        <div className="flex flex-col items-center">
-          <FaLeaf className="text-4xl text-green-600 mb-4" />
-          <h3 className="font-semibold">Always Fresh</h3>
-        </div>
-        <div className="flex flex-col items-center">
-          <FaAward className="text-4xl text-yellow-600 mb-4" />
-          <h3 className="font-semibold">Superior Quality</h3>
-        </div>
-        <div className="flex flex-col items-center">
-          <FaHeadset className="text-4xl text-purple-600 mb-4" />
-          <h3 className="font-semibold">Support</h3>
+      <section className="py-16 px-6 md:px-20 max-w-6xl mx-auto">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+          {[
+            { icon: <FaShippingFast />, title: "Free Shipping", color: "bg-emerald-50 text-emerald-700" },
+            { icon: <FaLeaf />, title: "Always Fresh", color: "bg-emerald-50 text-emerald-700" },
+            { icon: <FaAward />, title: "Superior Quality", color: "bg-amber-50 text-amber-700" },
+            { icon: <FaHeadset />, title: "24/7 Support", color: "bg-emerald-50 text-emerald-700" },
+          ].map((item, i) => (
+            <div key={i} className="flex flex-col items-center">
+              <div className={`w-16 h-16 flex items-center justify-center rounded-full ${item.color} mb-4 text-2xl`}>
+                {item.icon}
+              </div>
+              <h3 className="font-semibold text-gray-800">{item.title}</h3>
+            </div>
+          ))}
         </div>
       </section>
     </div>

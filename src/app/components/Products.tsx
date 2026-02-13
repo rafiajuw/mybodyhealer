@@ -7,20 +7,11 @@ import Link from "next/link";
 
 // Combined list of featured products (Food Supplements only - Oncology DISABLED)
 const featuredProducts = [
-  // Oncology Products - DISABLED
-  /*
-  { name: "Anastrozole", img: "/anastrozole.webp", category: "Oncology" },
-  { name: "Letrozole", img: "/letrozole.webp", category: "Oncology" },
-  { name: "Bicalutamide", img: "/bicalutamide.jpg", category: "Oncology" },
-  { name: "Capecitabine", img: "/capecitabine.avif", category: "Oncology" },
-  */
-  
-  // Selected Food Supplements (only the ones you kept)
-  { name: "Mormiks",       img: "/b4.avif",       category: "Food Supplement" },
-  { name: "Zeredemiks",    img: "/b5.avif",    category: "Food Supplement" },
-  { name: "Lifmo",         img: "/b3.avif",         category: "Food Supplement" },
-  { name: "Olive Oil",     img: "/olive2.avif",     category: "Food Supplement" },
-  { name: "NK Defense",    img: "/foodsupplement/nk.png",    category: "Food Supplement" },
+  { name: "Mormiks",    img: "/b4.avif",              slug: "mormiks",     category: "Food Supplement" },
+  { name: "Zeredemiks", img: "/b5.avif",              slug: "zeredemiks",  category: "Food Supplement" },
+  { name: "Lifmo",      img: "/b3.avif",              slug: "lifmo",       category: "Food Supplement" },
+  { name: "Olive Oil",  img: "/olive2.avif",          slug: "olive-oil",   category: "Food Supplement" },
+  { name: "NK Defense", img: "/foodsupplement/nk.png", slug: "nk-defense", category: "Food Supplement" },
 ];
 
 export default function Products() {
@@ -46,7 +37,7 @@ export default function Products() {
           Limited Time Offers
         </h2>
         <p className="text-gray-600 text-lg mb-6">
-          Oncology Medicines & Food Supplements – Best Prices & Trusted Quality
+          Premium Food Supplements – Best Prices & Trusted Quality
         </p>
 
         <div className="inline-block bg-gradient-to-r from-red-600 to-orange-500 text-white px-8 py-3 rounded-full font-bold text-xl shadow-lg">
@@ -84,15 +75,26 @@ export default function Products() {
                 {product.name}
               </h3>
 
-              <Link href="/shop" className="mt-auto">
-                <motion.button
-                  whileHover={{ scale: 1.08, y: -3 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="w-full py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-500 text-white font-semibold shadow-md hover:shadow-lg transition"
-                >
-                  COD
-                </motion.button>
-              </Link>
+              <div className="flex gap-3 mt-auto">
+                <Link href={`/shop/products/${product.slug}`} className="flex-1">
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="w-full py-3 rounded-xl bg-gray-800 text-white font-medium text-sm hover:bg-gray-900 transition"
+                  >
+                    View Details
+                  </motion.button>
+                </Link>
+                <Link href={`/shop/products/${product.slug}`} className="flex-1">
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="w-full py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-500 text-white font-medium text-sm shadow-md hover:shadow-lg transition"
+                  >
+                    Order COD
+                  </motion.button>
+                </Link>
+              </div>
             </div>
           </motion.div>
         ))}

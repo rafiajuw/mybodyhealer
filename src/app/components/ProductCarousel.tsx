@@ -6,11 +6,11 @@ import Image from "next/image";
 import Link from "next/link";
 
 const products = [
-  { name: "Mormiks", img: "/b4.avif" },
-  { name: "Zeredemiks", img: "/b5.avif" },
-  { name: "Lifmo", img: "/b3.avif" },
-  { name: "Olive Oil", img: "/olive1.avif" },
-  { name: "NK Defense", img: "/b6.avif" },
+  { name: "Mormiks", img: "/b4.avif", slug: "mormiks" },
+  { name: "Zeredemiks", img: "/b5.avif", slug: "zeredemiks" },
+  { name: "Lifmo", img: "/b3.avif", slug: "lifmo" },
+  { name: "Olive Oil", img: "/olive2.avif", slug: "olive-oil" },
+  { name: "NK Defense", img: "/foodsupplement/nk.png", slug: "nk-defense" },
 ];
 
 export default function ProductCarousel() {
@@ -62,17 +62,29 @@ export default function ProductCarousel() {
                 {products[current].name}
               </h3>
 
-              <Link href="/shop">
-                <motion.button
-                  whileHover={{ scale: 1.05, y: -2 }}
-                  whileTap={{ scale: 0.97 }}
-                  className="w-full py-3 rounded-xl text-white font-semibold shadow-lg 
-                  bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-700 hover:to-emerald-600 
-                  transition-all"
-                >
-                  COD
-                </motion.button>
-              </Link>
+              <div className="flex gap-3">
+                <Link href={`/shop/products/${products[current].slug}`} className="flex-1">
+                  <motion.button
+                    whileHover={{ scale: 1.03, y: -2 }}
+                    whileTap={{ scale: 0.97 }}
+                    className="w-full py-3 rounded-xl text-white font-semibold shadow-lg
+                    bg-gray-800 hover:bg-gray-900 transition-all text-sm"
+                  >
+                    View Details
+                  </motion.button>
+                </Link>
+                <Link href={`/shop/products/${products[current].slug}`} className="flex-1">
+                  <motion.button
+                    whileHover={{ scale: 1.03, y: -2 }}
+                    whileTap={{ scale: 0.97 }}
+                    className="w-full py-3 rounded-xl text-white font-semibold shadow-lg
+                    bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-700 hover:to-emerald-600
+                    transition-all text-sm"
+                  >
+                    Order COD
+                  </motion.button>
+                </Link>
+              </div>
             </div>
           </motion.div>
         </AnimatePresence>
